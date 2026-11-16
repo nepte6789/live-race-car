@@ -764,7 +764,8 @@ function render(m) {
       projectile.mesh.material.dispose();
     }
     projectiles.length = 0;
-    voice.clear();
+    if (g.racers.length) voice.dropQuestions();
+    else voice.clear();
     spokenQuiz = "";
     lastEvent = 0;
     for (const el of labels.values()) el.remove();
