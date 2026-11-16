@@ -2,12 +2,15 @@
 
 Game đua xe 3D kết nối TikTok LIVE, dựng theo cơ chế và không khí hai video tham chiếu: thành phố neon, 5 vòng đua, tên/avatar trên xe, TOP 10, minimap, câu hỏi A/B/C/D để tăng tốc, quà kích hoạt nitro/khiên/tên lửa/vòng xoáy. Đây là bản game chạy thật với hình học và vật liệu tự tạo, không phát lại video hay sao chép logo/tài sản của trò mẫu.
 
+![Bản đua 3D chạy thử với người mô phỏng](docs/preview.png)
+
 ## Chạy
 
 Node.js 20.12+ (khuyên Node 22 LTS), Chrome/Edge hoặc OBS có tăng tốc phần cứng:
 
 ```powershell
-cd tiktok-live-race
+git clone https://github.com/nepte6789/live-race-car.git
+cd live-race-car
 npm install
 npm start
 ```
