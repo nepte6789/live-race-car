@@ -1037,3 +1037,43 @@ footer button {
   border-color: #ffe39b;
   background: #332b22;
 }
+
+.awaiting-awards .quiz #answers,
+.awaiting-awards .quiz .quiz-timer,
+.awaiting-awards .quiz .quiz-foot {
+  display: none;
+}
+.awaiting-awards .quiz {
+  border-color: #ffdb7d;
+  background: linear-gradient(120deg, #342923f2, #18213cf2);
+}
+.awaiting-awards .quiz h2 {
+  color: #ffe7a3;
+}
+#nextRoundClock {
+  position: absolute;
+  top: 390px;
+  left: 350px;
+  right: 350px;
+  z-index: 5;
+  padding: 20px;
+  border: 1px solid #ffdf8a;
+  border-radius: 18px;
+  background: linear-gradient(#382d20ed, #171d35e8);
+  text-align: center;
+  color: #ffdf88;
+  box-shadow: 0 0 35px #ffba3022;
+}
+#nextRoundClock span {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+#nextRoundSeconds {
+  display: block;
+  font-size: 74px;
+  line-height: 1.2;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}

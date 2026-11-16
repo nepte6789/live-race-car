@@ -119,9 +119,12 @@ test("one lap ends at the finish line, preserves winner and auto starts next rou
   assert.equal(r.snapshot().winner, "1");
   assert.equal(r.users.get("1").progress, 100);
   assert.equal(r.users.get("1").wins, 1);
-  f.advance(12000);
+  f.advance(29999);
   r.tick();
-  assert.equal(r.phase, "countdown");
+  assert.equal(r.phase, "finished");
+  f.advance(1);
+  r.tick();
+  assert.equal(r.phase, "racing");
   assert.equal(r.round, 2);
   assert.equal(r.users.size, 1);
   assert.equal(r.users.get("1").progress, 0);

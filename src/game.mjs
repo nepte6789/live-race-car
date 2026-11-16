@@ -151,6 +151,7 @@ export class Race {
       answerElapsedMs: null,
       likes: 0,
       likeRemainder: 0,
+      likeThanksAt: null,
       followed: false,
     };
     this.users.set(id, p);
@@ -242,6 +243,15 @@ export class Race {
     if (!p) return;
     count = Math.max(0, Math.min(100000, Math.floor(Number(count) || 0)));
     p.likes += count;
+    if (
+      count > 0 &&
+      (p.likeThanksAt === null || this.now() - p.likeThanksAt >= 20000)
+    ) {
+      p.likeThanksAt = this.now();
+      this.emit("like", p, `${p.name} thả tim · tiếp sức đường đua!`, {
+        quantity: count,
+      });
+    }
     const sum = p.likeRemainder + count,
       units = Math.floor(sum / 10);
     p.likeRemainder = sum % 10;
@@ -368,7 +378,7 @@ export class Race {
       return b.progress - a.progress || a.joined - b.joined;
     });
   }
-  start() {
+  start({ immediate = false } = {}) {
     if (this.phase === "finished") this.reset();
     if (!["lobby", "finished"].includes(this.phase))
       throw Error("Ván đang chạy");
@@ -412,7 +422,16 @@ export class Race {
     this.quizPhase = "question";
     this.quizDeadline = null;
     this.lastTick = this.now();
-    this.emit("system", null, "Tất cả vào vị trí · xuất phát sau 5 giây!");
+    if (immediate) this.beginRacing(this.now());
+    else this.emit("system", null, "Tất cả vào vị trí · xuất phát sau 5 giây!");
+  }
+  beginRacing(now) {
+    this.phase = "racing";
+    this.raceStartedAt = now;
+    this.phaseDeadline = null;
+    this.quizStartedAt = now;
+    this.quizDeadline = now + this.config.quizSeconds * 1000;
+    this.emit("system", null, "XUẤT PHÁT · đường đua đã mở!");
   }
   reset({ keepPlayers = true } = {}) {
     this.round++;
@@ -469,6 +488,7 @@ export class Race {
     this.quizDeadline += this.config.revealSeconds * 1000;
   }
   nextQuiz() {
+    if (this.firstFinisherAt !== null) return;
     this.quizIndex++;
     this.quizPhase = "question";
     this.quizStartedAt = this.now();
@@ -482,6 +502,7 @@ export class Race {
   tickQuiz() {
     if (
       this.phase !== "racing" ||
+      this.firstFinisherAt !== null ||
       !this.quizDeadline ||
       this.now() < this.quizDeadline
     )
@@ -589,13 +610,8 @@ export class Race {
     this.lastTick = now;
     if (this.phase === "paused") return;
     if (this.phase === "countdown" && now >= this.phaseDeadline) {
-      this.phase = "racing";
       dt = 0;
-      this.raceStartedAt = now;
-      this.phaseDeadline = null;
-      this.quizStartedAt = now;
-      this.quizDeadline = now + this.config.quizSeconds * 1000;
-      this.emit("system", null, "XUẤT PHÁT · đường đua đã mở!");
+      this.beginRacing(now);
     }
     if (this.phase === "finished") {
       if (
@@ -604,12 +620,11 @@ export class Race {
         this.users.size
       ) {
         this.reset();
-        this.start();
+        this.start({ immediate: true });
       }
       return;
     }
     if (this.phase !== "racing") return;
-    this.tickQuiz();
     advanceTraffic(
       this.users.values(),
       dt,
@@ -632,18 +647,22 @@ export class Race {
         p.speed = 0;
         if (this.firstFinisherAt === null) {
           this.firstFinisherAt = now;
+          if (this.quizPhase === "question") this.finishQuiz();
+          this.quizPhase = "closed";
+          this.quizDeadline = null;
           p.wins++;
           this.emit("winner", p, `${p.name} cán đích đầu tiên!`);
         }
       }
     }
+    if (this.firstFinisherAt === null) this.tickQuiz();
     const running = [...this.users.values()].filter((p) => !p.finishedAt);
     if (
       this.firstFinisherAt !== null &&
       (!running.length || now - this.firstFinisherAt >= 15000)
     ) {
       this.phase = "finished";
-      this.phaseDeadline = now + 12000;
+      this.phaseDeadline = now + 30000;
       this.winner = this.ranking()[0]?.id || null;
     }
   }
@@ -686,12 +705,19 @@ export class Race {
           ? 0
           : Math.max(0, (effective - this.raceStartedAt) / 1000),
       winner: this.winner,
+      awaitingAwards:
+        this.firstFinisherAt !== null &&
+        (this.phase === "racing" ||
+          (this.phase === "paused" && this.pausedPhase === "racing")),
+      awardsDeadline:
+        this.firstFinisherAt === null ? null : this.firstFinisherAt + 15000,
       followCount: this.config.followBase + this.followers.size,
       events: this.events.filter((e) => now - e.at < 7000),
       chat: this.chat,
       quiz:
-        this.phase === "racing" ||
-        (this.phase === "paused" && this.pausedPhase === "racing")
+        this.firstFinisherAt === null &&
+        (this.phase === "racing" ||
+          (this.phase === "paused" && this.pausedPhase === "racing"))
           ? {
               id: this.quizIndex + 1,
               prompt: q.prompt,
