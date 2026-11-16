@@ -32,3 +32,7 @@ export function interactionSpeech(event) {
   if (/^qua(?: tang)?$/.test(normalized)) gift = "quà";
   return `Cảm ơn ${name} đã tặng ${quantity > 1 ? `${quantity} món quà${gift === "quà" ? "" : " " + gift}` : gift}.`;
 }
+
+export function answerSpeech(quiz) {
+  return `Đáp án ${"ABCD"[quiz.answer]}.`;
+}

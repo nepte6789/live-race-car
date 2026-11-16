@@ -34,6 +34,7 @@ export class Race {
     this.round = 1;
     this.phase = "lobby";
     this.users = new Map();
+    this.realComments = [];
     this.events = [];
     this.chat = [];
     this.serial = 0;
@@ -196,6 +197,16 @@ export class Race {
       demo: p.demo,
     });
     if (this.chat.length > 30) this.chat.shift();
+    if (
+      !p.demo &&
+      (p.activityAt == null || this.now() - p.activityAt >= 1000)
+    ) {
+      p.activityAt = this.now();
+      this.realComments.push({ id: p.id, at: this.now() });
+      this.realComments = this.realComments
+        .filter((x) => this.now() - x.at <= 30000)
+        .slice(-1000);
+    }
     const input = normalize(text);
     if (
       !p.demo &&
@@ -382,16 +393,15 @@ export class Race {
       },
     );
   }
-  member(data, eventId) {
+  member(data, eventId, arrivedAt = this.now()) {
     if (this.phase === "paused" || !this.once(eventId) || !data?.id) return;
     if (this.users.has(String(data.id))) return;
-    const last = this.memberAt;
-    if (last !== undefined && this.now() - last < 8000) return;
-    this.memberAt = this.now();
+    if (data.demo) return;
     this.emit(
       "welcome",
       { ...data, avatar: avatar(data.avatar) },
       `Chào ${String(data.name || "bạn").slice(0, 42)}! Thả tim hoặc bình luận để lên xe nhé.`,
+      { at: arrivedAt },
     );
   }
   ranking() {
@@ -473,7 +483,10 @@ export class Race {
     this.chat = [];
     this.combos.clear();
     this.quizIndex++;
-    if (!keepPlayers) this.users.clear();
+    if (!keepPlayers) {
+      this.users.clear();
+      this.realComments = [];
+    }
     let grid = 0;
     for (const p of this.users.values()) {
       const lane = LANES[grid % 4];
@@ -746,6 +759,8 @@ export class Race {
           ? {
               id: this.quizIndex + 1,
               prompt: q.prompt,
+              difficulty: q.difficulty,
+              topic: q.topic,
               options: q.options,
               deadline: this.quizDeadline,
               phase: this.quizPhase,

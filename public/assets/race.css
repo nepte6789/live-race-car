@@ -1077,3 +1077,26 @@ footer button {
   font-weight: 900;
   font-variant-numeric: tabular-nums;
 }
+
+.panorama-wait::before {
+  content: "✦ TOÀN CẢNH ĐƯỜNG ĐUA ✦";
+  position: absolute;
+  top: 590px;
+  left: 280px;
+  right: 280px;
+  text-align: center;
+  color: #a8f5ff;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  z-index: 4;
+  text-shadow: 0 0 18px #41d9ff;
+}
+.panorama-wait .vignette {
+  background: linear-gradient(
+    #080d29c9,
+    transparent 40%,
+    transparent 65%,
+    #030818c9
+  );
+}

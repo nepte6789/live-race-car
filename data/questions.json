@@ -1,26 +1,2018 @@
 [
-{"id":"q1","prompt":"Thủ đô của Việt Nam là thành phố nào?","options":["Huế","Hà Nội","Đà Nẵng","Cần Thơ"],"answer":1,"explanation":"Hà Nội là thủ đô của Việt Nam."},
-{"id":"q2","prompt":"2 + 3 bằng bao nhiêu?","options":["4","6","5","8"],"answer":2,"explanation":"Hai cộng ba bằng năm."},
-{"id":"q3","prompt":"Con vật nào kêu meo meo?","options":["Mèo","Chó","Bò","Gà"],"answer":0,"explanation":"Mèo kêu meo meo."},
-{"id":"q4","prompt":"Đèn giao thông màu nào yêu cầu dừng lại?","options":["Xanh","Vàng","Trắng","Đỏ"],"answer":3,"explanation":"Đèn đỏ yêu cầu dừng lại."},
-{"id":"q5","prompt":"Một tuần có bao nhiêu ngày?","options":["5","7","8","10"],"answer":1,"explanation":"Một tuần có bảy ngày."},
-{"id":"q6","prompt":"Mặt trời thường mọc ở hướng nào?","options":["Tây","Nam","Đông","Bắc"],"answer":2,"explanation":"Mặt trời mọc ở hướng đông."},
-{"id":"q7","prompt":"10 - 4 bằng bao nhiêu?","options":["6","5","7","4"],"answer":0,"explanation":"Mười trừ bốn bằng sáu."},
-{"id":"q8","prompt":"Trang phục truyền thống có hai tà dài là gì?","options":["Áo khoác","Áo phao","Áo len","Áo dài"],"answer":3,"explanation":"Áo dài là trang phục truyền thống Việt Nam."},
-{"id":"q9","prompt":"Ngôi sao trên quốc kỳ Việt Nam có màu gì?","options":["Xanh","Vàng","Trắng","Đỏ"],"answer":1,"explanation":"Quốc kỳ Việt Nam có sao vàng trên nền đỏ."},
-{"id":"q10","prompt":"Một giờ có bao nhiêu phút?","options":["30","45","60","90"],"answer":2,"explanation":"Một giờ có sáu mươi phút."},
-{"id":"q11","prompt":"Con vật nào có chiếc vòi dài?","options":["Voi","Hổ","Ngựa","Cá"],"answer":0,"explanation":"Voi có chiếc vòi dài."},
-{"id":"q12","prompt":"Loại quả nào là nguyên liệu làm kẹo dừa?","options":["Cam","Táo","Chuối","Dừa"],"answer":3,"explanation":"Kẹo dừa được làm từ dừa."},
-{"id":"q13","prompt":"3 × 4 bằng bao nhiêu?","options":["7","12","10","14"],"answer":1,"explanation":"Ba nhân bốn bằng mười hai."},
-{"id":"q14","prompt":"Hoa vàng thường chưng Tết miền Nam là hoa gì?","options":["Đào","Sen","Mai","Hồng"],"answer":2,"explanation":"Hoa mai vàng thường được chưng Tết ở miền Nam."},
-{"id":"q15","prompt":"Bánh hình vuông thường gói vào dịp Tết là gì?","options":["Bánh chưng","Bánh tét","Bánh bao","Bánh mì"],"answer":0,"explanation":"Bánh chưng thường có hình vuông."},
-{"id":"q16","prompt":"Con nhện có bao nhiêu chân?","options":["4","6","10","8"],"answer":3,"explanation":"Nhện có tám chân."},
-{"id":"q17","prompt":"Cầu Rồng nổi tiếng nằm ở thành phố nào?","options":["Huế","Đà Nẵng","Hà Nội","Cần Thơ"],"answer":1,"explanation":"Cầu Rồng nằm ở Đà Nẵng."},
-{"id":"q18","prompt":"Đội gì khi đi xe máy để bảo vệ đầu?","options":["Nón lá","Mũ len","Mũ bảo hiểm","Mũ giấy"],"answer":2,"explanation":"Cần đội mũ bảo hiểm khi đi xe máy."},
-{"id":"q19","prompt":"Một năm có bao nhiêu tháng?","options":["12","10","11","13"],"answer":0,"explanation":"Một năm có mười hai tháng."},
-{"id":"q20","prompt":"20 chia 5 bằng bao nhiêu?","options":["2","3","5","4"],"answer":3,"explanation":"Hai mươi chia năm bằng bốn."},
-{"id":"q21","prompt":"Số điện thoại gọi cứu hỏa tại Việt Nam là gì?","options":["115","114","113","112"],"answer":1,"explanation":"Số cứu hỏa là 114."},
-{"id":"q22","prompt":"Con vật nào cho chúng ta mật ong?","options":["Kiến","Bướm","Ong","Ruồi"],"answer":2,"explanation":"Ong tạo ra mật ong."},
-{"id":"q23","prompt":"Loại nước chấm làm từ cá ủ với muối là gì?","options":["Nước mắm","Nước đường","Nước cam","Nước dừa"],"answer":0,"explanation":"Nước mắm được làm từ cá và muối."},
-{"id":"q24","prompt":"Hành tinh chúng ta đang sống là gì?","options":["Sao Hỏa","Sao Kim","Sao Mộc","Trái Đất"],"answer":3,"explanation":"Chúng ta đang sống trên Trái Đất."}
+  {
+    "id": "q1",
+    "prompt": "Thủ đô của Việt Nam là thành phố nào?",
+    "options": [
+      "Huế",
+      "Hà Nội",
+      "Đà Nẵng",
+      "Cần Thơ"
+    ],
+    "answer": 1,
+    "explanation": "Hà Nội là thủ đô của Việt Nam.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Hành tinh nào gần Mặt Trời nhất?",
+    "options": [
+      "Sao Hỏa",
+      "Sao Mộc",
+      "Sao Kim",
+      "Sao Thủy"
+    ],
+    "answer": 3,
+    "explanation": "Sao Thủy ở gần Mặt Trời nhất.",
+    "difficulty": "medium",
+    "topic": "Thiên văn",
+    "id": "q2"
+  },
+  {
+    "prompt": "Nguyên tố nào có số hiệu nguyên tử bằng 6?",
+    "options": [
+      "Heli",
+      "Cacbon",
+      "Nitơ",
+      "Oxy"
+    ],
+    "answer": 1,
+    "explanation": "Cacbon có số hiệu nguyên tử 6.",
+    "difficulty": "hard",
+    "topic": "Hóa học",
+    "id": "q3"
+  },
+  {
+    "id": "q4",
+    "prompt": "2 + 3 bằng bao nhiêu?",
+    "options": [
+      "4",
+      "6",
+      "5",
+      "8"
+    ],
+    "answer": 2,
+    "explanation": "Hai cộng ba bằng năm.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Tác giả Truyện Kiều là ai?",
+    "options": [
+      "Xuân Diệu",
+      "Nguyễn Trãi",
+      "Nam Cao",
+      "Nguyễn Du"
+    ],
+    "answer": 3,
+    "explanation": "Truyện Kiều là tác phẩm của Nguyễn Du.",
+    "difficulty": "medium",
+    "topic": "Văn học",
+    "id": "q5"
+  },
+  {
+    "prompt": "Tác phẩm Bình Ngô đại cáo do ai viết?",
+    "options": [
+      "Lý Thường Kiệt",
+      "Nguyễn Du",
+      "Nguyễn Trãi",
+      "Trần Hưng Đạo"
+    ],
+    "answer": 2,
+    "explanation": "Nguyễn Trãi là tác giả Bình Ngô đại cáo.",
+    "difficulty": "hard",
+    "topic": "Văn học",
+    "id": "q6"
+  },
+  {
+    "id": "q7",
+    "prompt": "Con vật nào kêu meo meo?",
+    "options": [
+      "Mèo",
+      "Chó",
+      "Bò",
+      "Gà"
+    ],
+    "answer": 0,
+    "explanation": "Mèo kêu meo meo.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Khí nào chiếm tỉ lệ lớn nhất trong khí quyển Trái Đất?",
+    "options": [
+      "Hiđrô",
+      "Cacbon đioxit",
+      "Oxy",
+      "Nitơ"
+    ],
+    "answer": 3,
+    "explanation": "Nitơ chiếm khoảng 78 phần trăm khí quyển.",
+    "difficulty": "medium",
+    "topic": "Khoa học",
+    "id": "q8"
+  },
+  {
+    "prompt": "Đơn vị đo điện trở trong hệ SI là gì?",
+    "options": [
+      "Ampe",
+      "Vôn",
+      "Jun",
+      "Ôm"
+    ],
+    "answer": 3,
+    "explanation": "Điện trở được đo bằng ôm.",
+    "difficulty": "hard",
+    "topic": "Vật lý",
+    "id": "q9"
+  },
+  {
+    "id": "q10",
+    "prompt": "Đèn giao thông màu nào yêu cầu dừng lại?",
+    "options": [
+      "Xanh",
+      "Vàng",
+      "Trắng",
+      "Đỏ"
+    ],
+    "answer": 3,
+    "explanation": "Đèn đỏ yêu cầu dừng lại.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Nước tinh khiết đóng băng ở bao nhiêu độ C tại áp suất chuẩn?",
+    "options": [
+      "10",
+      "0",
+      "50",
+      "100"
+    ],
+    "answer": 1,
+    "explanation": "Nước tinh khiết đóng băng ở 0 độ C tại áp suất chuẩn.",
+    "difficulty": "medium",
+    "topic": "Khoa học",
+    "id": "q11"
+  },
+  {
+    "prompt": "Hành tinh nào có thời gian tự quay quanh trục dài hơn thời gian quay quanh Mặt Trời?",
+    "options": [
+      "Sao Mộc",
+      "Sao Kim",
+      "Trái Đất",
+      "Sao Hỏa"
+    ],
+    "answer": 1,
+    "explanation": "Chu kỳ tự quay của Sao Kim khoảng 243 ngày, dài hơn chu kỳ quỹ đạo khoảng 225 ngày.",
+    "difficulty": "hard",
+    "topic": "Thiên văn",
+    "id": "q12"
+  },
+  {
+    "id": "q13",
+    "prompt": "Một tuần có bao nhiêu ngày?",
+    "options": [
+      "5",
+      "7",
+      "8",
+      "10"
+    ],
+    "answer": 1,
+    "explanation": "Một tuần có bảy ngày.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Cố đô Hoa Lư nằm ở tỉnh nào?",
+    "options": [
+      "Lạng Sơn",
+      "Ninh Bình",
+      "Thanh Hóa",
+      "Nghệ An"
+    ],
+    "answer": 1,
+    "explanation": "Hoa Lư nằm ở Ninh Bình.",
+    "difficulty": "medium",
+    "topic": "Địa lý",
+    "id": "q14"
+  },
+  {
+    "prompt": "Số nguyên tố nhỏ nhất lớn hơn 50 là số nào?",
+    "options": [
+      "57",
+      "51",
+      "55",
+      "53"
+    ],
+    "answer": 3,
+    "explanation": "53 là số nguyên tố nhỏ nhất lớn hơn 50.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q15"
+  },
+  {
+    "id": "q16",
+    "prompt": "Mặt trời thường mọc ở hướng nào?",
+    "options": [
+      "Tây",
+      "Nam",
+      "Đông",
+      "Bắc"
+    ],
+    "answer": 2,
+    "explanation": "Mặt trời mọc ở hướng đông.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Ai là tác giả Dế Mèn phiêu lưu ký?",
+    "options": [
+      "Vũ Trọng Phụng",
+      "Ngô Tất Tố",
+      "Huy Cận",
+      "Tô Hoài"
+    ],
+    "answer": 3,
+    "explanation": "Tô Hoài viết Dế Mèn phiêu lưu ký.",
+    "difficulty": "medium",
+    "topic": "Văn học",
+    "id": "q17"
+  },
+  {
+    "prompt": "Trong hệ nhị phân, số 101 tương đương số nào ở hệ thập phân?",
+    "options": [
+      "4",
+      "3",
+      "5",
+      "6"
+    ],
+    "answer": 2,
+    "explanation": "101 trong hệ nhị phân bằng 4 cộng 1.",
+    "difficulty": "hard",
+    "topic": "Công nghệ",
+    "id": "q18"
+  },
+  {
+    "id": "q19",
+    "prompt": "10 - 4 bằng bao nhiêu?",
+    "options": [
+      "6",
+      "5",
+      "7",
+      "4"
+    ],
+    "answer": 0,
+    "explanation": "Mười trừ bốn bằng sáu.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Đội hình đầy đủ của một đội bóng đá trên sân có bao nhiêu cầu thủ?",
+    "options": [
+      "12",
+      "10",
+      "11",
+      "9"
+    ],
+    "answer": 2,
+    "explanation": "Mỗi đội có 11 cầu thủ khi bắt đầu trận.",
+    "difficulty": "medium",
+    "topic": "Thể thao",
+    "id": "q20"
+  },
+  {
+    "prompt": "Tế bào nào trong máu chủ yếu vận chuyển oxy?",
+    "options": [
+      "Hồng cầu",
+      "Tế bào thần kinh",
+      "Bạch cầu",
+      "Tiểu cầu"
+    ],
+    "answer": 0,
+    "explanation": "Hồng cầu chứa hemoglobin vận chuyển oxy.",
+    "difficulty": "hard",
+    "topic": "Sinh học",
+    "id": "q21"
+  },
+  {
+    "id": "q22",
+    "prompt": "Trang phục truyền thống có hai tà dài là gì?",
+    "options": [
+      "Áo khoác",
+      "Áo phao",
+      "Áo len",
+      "Áo dài"
+    ],
+    "answer": 3,
+    "explanation": "Áo dài là trang phục truyền thống Việt Nam.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Biểu tượng hóa học của vàng là gì?",
+    "options": [
+      "Au",
+      "Ag",
+      "Cu",
+      "Fe"
+    ],
+    "answer": 0,
+    "explanation": "Au là kí hiệu của vàng.",
+    "difficulty": "medium",
+    "topic": "Hóa học",
+    "id": "q23"
+  },
+  {
+    "prompt": "Hiệp định Genève về Đông Dương được ký năm nào?",
+    "options": [
+      "1973",
+      "1954",
+      "1960",
+      "1945"
+    ],
+    "answer": 1,
+    "explanation": "Hiệp định Genève về Đông Dương được ký năm 1954.",
+    "difficulty": "hard",
+    "topic": "Lịch sử",
+    "id": "q24"
+  },
+  {
+    "id": "q25",
+    "prompt": "Ngôi sao trên quốc kỳ Việt Nam có màu gì?",
+    "options": [
+      "Xanh",
+      "Vàng",
+      "Trắng",
+      "Đỏ"
+    ],
+    "answer": 1,
+    "explanation": "Quốc kỳ Việt Nam có sao vàng trên nền đỏ.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Lục địa nào có diện tích lớn nhất?",
+    "options": [
+      "Châu Á",
+      "Châu Úc",
+      "Châu Âu",
+      "Châu Nam Cực"
+    ],
+    "answer": 0,
+    "explanation": "Châu Á có diện tích lớn nhất.",
+    "difficulty": "medium",
+    "topic": "Địa lý",
+    "id": "q26"
+  },
+  {
+    "prompt": "Đại dương nào có diện tích lớn nhất?",
+    "options": [
+      "Đại Tây Dương",
+      "Bắc Băng Dương",
+      "Thái Bình Dương",
+      "Ấn Độ Dương"
+    ],
+    "answer": 2,
+    "explanation": "Thái Bình Dương có diện tích lớn nhất.",
+    "difficulty": "hard",
+    "topic": "Địa lý",
+    "id": "q27"
+  },
+  {
+    "id": "q28",
+    "prompt": "Một giờ có bao nhiêu phút?",
+    "options": [
+      "30",
+      "45",
+      "60",
+      "90"
+    ],
+    "answer": 2,
+    "explanation": "Một giờ có sáu mươi phút.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Loài động vật có vú nào có thể bay chủ động?",
+    "options": [
+      "Dơi",
+      "Chim cánh cụt",
+      "Sóc bay",
+      "Cá voi"
+    ],
+    "answer": 0,
+    "explanation": "Dơi là động vật có vú bay chủ động.",
+    "difficulty": "medium",
+    "topic": "Động vật",
+    "id": "q29"
+  },
+  {
+    "prompt": "Quá trình cây xanh sử dụng ánh sáng tạo chất hữu cơ gọi là gì?",
+    "options": [
+      "Hô hấp",
+      "Quang hợp",
+      "Thoát hơi nước",
+      "Lên men"
+    ],
+    "answer": 1,
+    "explanation": "Quang hợp tạo chất hữu cơ nhờ năng lượng ánh sáng.",
+    "difficulty": "hard",
+    "topic": "Sinh học",
+    "id": "q30"
+  },
+  {
+    "id": "q31",
+    "prompt": "Con vật nào có chiếc vòi dài?",
+    "options": [
+      "Voi",
+      "Hổ",
+      "Ngựa",
+      "Cá"
+    ],
+    "answer": 0,
+    "explanation": "Voi có chiếc vòi dài.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Bộ phận nào của cây thường hút nước từ đất?",
+    "options": [
+      "Quả",
+      "Hạt",
+      "Hoa",
+      "Rễ"
+    ],
+    "answer": 3,
+    "explanation": "Rễ hút nước và khoáng từ đất.",
+    "difficulty": "medium",
+    "topic": "Sinh học",
+    "id": "q32"
+  },
+  {
+    "prompt": "Ai đưa ra thuyết tương đối hẹp năm 1905?",
+    "options": [
+      "Isaac Newton",
+      "Charles Darwin",
+      "Albert Einstein",
+      "Galileo Galilei"
+    ],
+    "answer": 2,
+    "explanation": "Einstein công bố thuyết tương đối hẹp năm 1905.",
+    "difficulty": "hard",
+    "topic": "Vật lý",
+    "id": "q33"
+  },
+  {
+    "id": "q34",
+    "prompt": "Loại quả nào là nguyên liệu làm kẹo dừa?",
+    "options": [
+      "Cam",
+      "Táo",
+      "Chuối",
+      "Dừa"
+    ],
+    "answer": 3,
+    "explanation": "Kẹo dừa được làm từ dừa.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Chiến thắng Điện Biên Phủ diễn ra năm nào?",
+    "options": [
+      "1945",
+      "1975",
+      "1968",
+      "1954"
+    ],
+    "answer": 3,
+    "explanation": "Chiến thắng Điện Biên Phủ diễn ra năm 1954.",
+    "difficulty": "medium",
+    "topic": "Lịch sử",
+    "id": "q35"
+  },
+  {
+    "prompt": "Đồng vị cacbon thường dùng trong định tuổi hiện vật hữu cơ là gì?",
+    "options": [
+      "Cacbon 13",
+      "Cacbon 16",
+      "Cacbon 12",
+      "Cacbon 14"
+    ],
+    "answer": 3,
+    "explanation": "Phương pháp định tuổi dùng đồng vị phóng xạ cacbon 14.",
+    "difficulty": "hard",
+    "topic": "Khoa học",
+    "id": "q36"
+  },
+  {
+    "id": "q37",
+    "prompt": "3 × 4 bằng bao nhiêu?",
+    "options": [
+      "7",
+      "12",
+      "10",
+      "14"
+    ],
+    "answer": 1,
+    "explanation": "Ba nhân bốn bằng mười hai.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Vịnh Hạ Long thuộc tỉnh nào?",
+    "options": [
+      "Quảng Ninh",
+      "Lạng Sơn",
+      "Cao Bằng",
+      "Lào Cai"
+    ],
+    "answer": 0,
+    "explanation": "Vịnh Hạ Long thuộc Quảng Ninh.",
+    "difficulty": "medium",
+    "topic": "Địa lý",
+    "id": "q38"
+  },
+  {
+    "prompt": "Đường nối các điểm có cùng độ cao trên bản đồ gọi là gì?",
+    "options": [
+      "Đường biên giới",
+      "Đường vĩ tuyến",
+      "Đường kinh tuyến",
+      "Đường đồng mức"
+    ],
+    "answer": 3,
+    "explanation": "Đường đồng mức nối các điểm cùng độ cao.",
+    "difficulty": "hard",
+    "topic": "Địa lý",
+    "id": "q39"
+  },
+  {
+    "id": "q40",
+    "prompt": "Hoa vàng thường chưng Tết miền Nam là hoa gì?",
+    "options": [
+      "Đào",
+      "Sen",
+      "Mai",
+      "Hồng"
+    ],
+    "answer": 2,
+    "explanation": "Hoa mai vàng thường được chưng Tết ở miền Nam.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Đơn vị đo cường độ dòng điện là gì?",
+    "options": [
+      "Oát",
+      "Vôn",
+      "Mét",
+      "Ampe"
+    ],
+    "answer": 3,
+    "explanation": "Cường độ dòng điện được đo bằng ampe.",
+    "difficulty": "medium",
+    "topic": "Vật lý",
+    "id": "q41"
+  },
+  {
+    "prompt": "Số cạnh của một khối lập phương là bao nhiêu?",
+    "options": [
+      "8",
+      "10",
+      "12",
+      "6"
+    ],
+    "answer": 2,
+    "explanation": "Khối lập phương có 12 cạnh.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q42"
+  },
+  {
+    "id": "q43",
+    "prompt": "Bánh hình vuông thường gói vào dịp Tết là gì?",
+    "options": [
+      "Bánh chưng",
+      "Bánh tét",
+      "Bánh bao",
+      "Bánh mì"
+    ],
+    "answer": 0,
+    "explanation": "Bánh chưng thường có hình vuông.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Quốc gia nào có thủ đô là Tokyo?",
+    "options": [
+      "Nhật Bản",
+      "Hàn Quốc",
+      "Lào",
+      "Thái Lan"
+    ],
+    "answer": 0,
+    "explanation": "Tokyo là thủ đô Nhật Bản.",
+    "difficulty": "medium",
+    "topic": "Địa lý",
+    "id": "q44"
+  },
+  {
+    "prompt": "Nhạc cụ piano tiêu chuẩn hiện đại thường có mấy phím?",
+    "options": [
+      "61",
+      "76",
+      "88",
+      "96"
+    ],
+    "answer": 2,
+    "explanation": "Piano tiêu chuẩn hiện đại thường có 88 phím.",
+    "difficulty": "hard",
+    "topic": "Âm nhạc",
+    "id": "q45"
+  },
+  {
+    "id": "q46",
+    "prompt": "Con nhện có bao nhiêu chân?",
+    "options": [
+      "4",
+      "6",
+      "10",
+      "8"
+    ],
+    "answer": 3,
+    "explanation": "Nhện có tám chân.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Loại vitamin nào được cơ thể tổng hợp khi da tiếp xúc ánh nắng phù hợp?",
+    "options": [
+      "Vitamin B12",
+      "Vitamin K",
+      "Vitamin D",
+      "Vitamin C"
+    ],
+    "answer": 2,
+    "explanation": "Ánh nắng hỗ trợ cơ thể tổng hợp vitamin D.",
+    "difficulty": "medium",
+    "topic": "Sinh học",
+    "id": "q47"
+  },
+  {
+    "prompt": "Chất xúc tác sinh học trong cơ thể thường được gọi là gì?",
+    "options": [
+      "Huyết tương",
+      "Kháng thể",
+      "Enzyme",
+      "Hoocmon"
+    ],
+    "answer": 2,
+    "explanation": "Enzyme là chất xúc tác sinh học.",
+    "difficulty": "hard",
+    "topic": "Sinh học",
+    "id": "q48"
+  },
+  {
+    "id": "q49",
+    "prompt": "Cầu Rồng nổi tiếng nằm ở thành phố nào?",
+    "options": [
+      "Huế",
+      "Đà Nẵng",
+      "Hà Nội",
+      "Cần Thơ"
+    ],
+    "answer": 1,
+    "explanation": "Cầu Rồng nằm ở Đà Nẵng.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Hình vuông có bao nhiêu trục đối xứng?",
+    "options": [
+      "3",
+      "2",
+      "6",
+      "4"
+    ],
+    "answer": 3,
+    "explanation": "Hình vuông có bốn trục đối xứng.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q50"
+  },
+  {
+    "prompt": "Thành phần chủ yếu của khí thiên nhiên là khí nào?",
+    "options": [
+      "Metan",
+      "Nitơ",
+      "Clo",
+      "Oxy"
+    ],
+    "answer": 0,
+    "explanation": "Khí thiên nhiên chủ yếu chứa metan.",
+    "difficulty": "hard",
+    "topic": "Hóa học",
+    "id": "q51"
+  },
+  {
+    "id": "q52",
+    "prompt": "Đội gì khi đi xe máy để bảo vệ đầu?",
+    "options": [
+      "Nón lá",
+      "Mũ len",
+      "Mũ bảo hiểm",
+      "Mũ giấy"
+    ],
+    "answer": 2,
+    "explanation": "Cần đội mũ bảo hiểm khi đi xe máy.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Tốc độ ánh sáng trong chân không xấp xỉ bao nhiêu km mỗi giây?",
+    "options": [
+      "300000",
+      "30000",
+      "3000",
+      "300"
+    ],
+    "answer": 0,
+    "explanation": "Tốc độ ánh sáng xấp xỉ 300 nghìn km mỗi giây.",
+    "difficulty": "medium",
+    "topic": "Vật lý",
+    "id": "q53"
+  },
+  {
+    "prompt": "Trong cờ vua, quân nào di chuyển theo hình chữ L?",
+    "options": [
+      "Hậu",
+      "Xe",
+      "Tượng",
+      "Mã"
+    ],
+    "answer": 3,
+    "explanation": "Quân mã di chuyển theo hình chữ L.",
+    "difficulty": "hard",
+    "topic": "Tư duy",
+    "id": "q54"
+  },
+  {
+    "id": "q55",
+    "prompt": "Một năm có bao nhiêu tháng?",
+    "options": [
+      "12",
+      "10",
+      "11",
+      "13"
+    ],
+    "answer": 0,
+    "explanation": "Một năm có mười hai tháng.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Loài chim nào không bay được nhưng bơi giỏi ở vùng lạnh?",
+    "options": [
+      "Chim én",
+      "Đại bàng",
+      "Chim cánh cụt",
+      "Chim sẻ"
+    ],
+    "answer": 2,
+    "explanation": "Chim cánh cụt không bay nhưng bơi giỏi.",
+    "difficulty": "medium",
+    "topic": "Động vật",
+    "id": "q56"
+  },
+  {
+    "prompt": "Một byte thông thường bằng bao nhiêu bit?",
+    "options": [
+      "4",
+      "8",
+      "32",
+      "16"
+    ],
+    "answer": 1,
+    "explanation": "Một byte bằng tám bit.",
+    "difficulty": "hard",
+    "topic": "Công nghệ",
+    "id": "q57"
+  },
+  {
+    "id": "q58",
+    "prompt": "20 chia 5 bằng bao nhiêu?",
+    "options": [
+      "2",
+      "3",
+      "5",
+      "4"
+    ],
+    "answer": 3,
+    "explanation": "Hai mươi chia năm bằng bốn.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Cầu thủ nào được phép dùng tay trong khu phạt đền của đội mình?",
+    "options": [
+      "Thủ môn",
+      "Hậu vệ bất kỳ",
+      "Tiền vệ",
+      "Tiền đạo"
+    ],
+    "answer": 0,
+    "explanation": "Thủ môn được dùng tay trong khu phạt đền đội mình theo luật.",
+    "difficulty": "medium",
+    "topic": "Thể thao",
+    "id": "q59"
+  },
+  {
+    "prompt": "Nhà văn nào viết truyện ngắn Chí Phèo?",
+    "options": [
+      "Thạch Lam",
+      "Nam Cao",
+      "Nguyễn Tuân",
+      "Tô Hoài"
+    ],
+    "answer": 1,
+    "explanation": "Nam Cao là tác giả Chí Phèo.",
+    "difficulty": "hard",
+    "topic": "Văn học",
+    "id": "q60"
+  },
+  {
+    "id": "q61",
+    "prompt": "Số điện thoại gọi cứu hỏa tại Việt Nam là gì?",
+    "options": [
+      "115",
+      "114",
+      "113",
+      "112"
+    ],
+    "answer": 1,
+    "explanation": "Số cứu hỏa là 114.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Tết Trung thu diễn ra vào ngày nào âm lịch?",
+    "options": [
+      "Mùng một tháng Giêng",
+      "Mùng năm tháng Năm",
+      "Rằm tháng Tám",
+      "Rằm tháng Giêng"
+    ],
+    "answer": 2,
+    "explanation": "Trung thu là ngày 15 tháng Tám âm lịch.",
+    "difficulty": "medium",
+    "topic": "Văn hóa",
+    "id": "q62"
+  },
+  {
+    "prompt": "Vận tốc là đại lượng có yếu tố nào khác với tốc độ?",
+    "options": [
+      "Khối lượng",
+      "Nhiệt độ",
+      "Hướng",
+      "Thể tích"
+    ],
+    "answer": 2,
+    "explanation": "Vận tốc là đại lượng có hướng.",
+    "difficulty": "hard",
+    "topic": "Vật lý",
+    "id": "q63"
+  },
+  {
+    "id": "q64",
+    "prompt": "Con vật nào cho chúng ta mật ong?",
+    "options": [
+      "Kiến",
+      "Bướm",
+      "Ong",
+      "Ruồi"
+    ],
+    "answer": 2,
+    "explanation": "Ong tạo ra mật ong.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Kí hiệu hóa học của nước là gì?",
+    "options": [
+      "CO2",
+      "NaCl",
+      "H2O",
+      "O2"
+    ],
+    "answer": 2,
+    "explanation": "Nước có công thức H2O.",
+    "difficulty": "medium",
+    "topic": "Hóa học",
+    "id": "q65"
+  },
+  {
+    "prompt": "Khí nào làm nước vôi trong vẩn đục khi sục lượng vừa đủ?",
+    "options": [
+      "Cacbon đioxit",
+      "Hiđrô",
+      "Nitơ",
+      "Oxy"
+    ],
+    "answer": 0,
+    "explanation": "CO2 tạo kết tủa canxi cacbonat với nước vôi trong.",
+    "difficulty": "hard",
+    "topic": "Hóa học",
+    "id": "q66"
+  },
+  {
+    "id": "q67",
+    "prompt": "Loại nước chấm làm từ cá ủ với muối là gì?",
+    "options": [
+      "Nước mắm",
+      "Nước đường",
+      "Nước cam",
+      "Nước dừa"
+    ],
+    "answer": 0,
+    "explanation": "Nước mắm được làm từ cá và muối.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Đàn ghi-ta phổ thông thường có mấy dây?",
+    "options": [
+      "4",
+      "8",
+      "5",
+      "6"
+    ],
+    "answer": 3,
+    "explanation": "Ghi-ta phổ thông thường có sáu dây.",
+    "difficulty": "medium",
+    "topic": "Âm nhạc",
+    "id": "q68"
+  },
+  {
+    "prompt": "Tên đơn vị đo tần số trong hệ SI là gì?",
+    "options": [
+      "Jun",
+      "Niutơn",
+      "Pascal",
+      "Héc"
+    ],
+    "answer": 3,
+    "explanation": "Tần số được đo bằng héc, ký hiệu Hz.",
+    "difficulty": "hard",
+    "topic": "Vật lý",
+    "id": "q69"
+  },
+  {
+    "id": "q70",
+    "prompt": "Hành tinh chúng ta đang sống là gì?",
+    "options": [
+      "Sao Hỏa",
+      "Sao Kim",
+      "Sao Mộc",
+      "Trái Đất"
+    ],
+    "answer": 3,
+    "explanation": "Chúng ta đang sống trên Trái Đất.",
+    "difficulty": "easy",
+    "topic": "Đời sống"
+  },
+  {
+    "prompt": "Trong máy tính, CPU thường được gọi là gì?",
+    "options": [
+      "Bộ xử lý trung tâm",
+      "Bàn phím",
+      "Bộ nguồn",
+      "Màn hình"
+    ],
+    "answer": 0,
+    "explanation": "CPU là bộ xử lý trung tâm.",
+    "difficulty": "medium",
+    "topic": "Công nghệ",
+    "id": "q71"
+  },
+  {
+    "prompt": "Số nào là số chính phương?",
+    "options": [
+      "147",
+      "146",
+      "144",
+      "145"
+    ],
+    "answer": 2,
+    "explanation": "144 bằng 12 bình phương.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q72"
+  },
+  {
+    "prompt": "Quả nào thường có múi và giàu vitamin C?",
+    "options": [
+      "Mít",
+      "Dừa",
+      "Sầu riêng",
+      "Cam"
+    ],
+    "answer": 3,
+    "explanation": "Cam là quả có múi.",
+    "difficulty": "easy",
+    "topic": "Ẩm thực",
+    "id": "q73"
+  },
+  {
+    "prompt": "7 × 3 + 0 bằng bao nhiêu?",
+    "options": [
+      "28",
+      "19",
+      "24",
+      "21"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 21 cộng 0 bằng 21.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q74"
+  },
+  {
+    "prompt": "8² - 2² bằng bao nhiêu?",
+    "options": [
+      "60",
+      "69",
+      "55",
+      "64"
+    ],
+    "answer": 0,
+    "explanation": "64 trừ 4 bằng 60.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q75"
+  },
+  {
+    "prompt": "Con vật nào thường gáy báo sáng?",
+    "options": [
+      "Vịt",
+      "Gà trống",
+      "Dê",
+      "Mèo"
+    ],
+    "answer": 1,
+    "explanation": "Gà trống thường gáy vào buổi sáng.",
+    "difficulty": "easy",
+    "topic": "Động vật",
+    "id": "q76"
+  },
+  {
+    "prompt": "8 × 4 + 1 bằng bao nhiêu?",
+    "options": [
+      "36",
+      "31",
+      "40",
+      "33"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 32 cộng 1 bằng 33.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q77"
+  },
+  {
+    "prompt": "9² - 2² bằng bao nhiêu?",
+    "options": [
+      "86",
+      "72",
+      "77",
+      "81"
+    ],
+    "answer": 2,
+    "explanation": "81 trừ 4 bằng 77.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q78"
+  },
+  {
+    "prompt": "Màu nào tạo thành khi pha xanh dương với vàng?",
+    "options": [
+      "Hồng",
+      "Tím",
+      "Xanh lá",
+      "Cam"
+    ],
+    "answer": 2,
+    "explanation": "Xanh dương pha vàng tạo xanh lá.",
+    "difficulty": "easy",
+    "topic": "Màu sắc",
+    "id": "q79"
+  },
+  {
+    "prompt": "9 × 5 + 2 bằng bao nhiêu?",
+    "options": [
+      "50",
+      "45",
+      "47",
+      "54"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 45 cộng 2 bằng 47.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q80"
+  },
+  {
+    "prompt": "10² - 2² bằng bao nhiêu?",
+    "options": [
+      "96",
+      "100",
+      "91",
+      "105"
+    ],
+    "answer": 0,
+    "explanation": "100 trừ 4 bằng 96.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q81"
+  },
+  {
+    "prompt": "Một bàn tay thông thường có mấy ngón?",
+    "options": [
+      "6",
+      "3",
+      "4",
+      "5"
+    ],
+    "answer": 3,
+    "explanation": "Một bàn tay thông thường có năm ngón.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q82"
+  },
+  {
+    "prompt": "10 × 6 + 3 bằng bao nhiêu?",
+    "options": [
+      "66",
+      "61",
+      "63",
+      "70"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 60 cộng 3 bằng 63.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q83"
+  },
+  {
+    "prompt": "11² - 2² bằng bao nhiêu?",
+    "options": [
+      "117",
+      "121",
+      "112",
+      "126"
+    ],
+    "answer": 0,
+    "explanation": "121 trừ 4 bằng 117.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q84"
+  },
+  {
+    "prompt": "Thiết bị nào dùng để chụp ảnh?",
+    "options": [
+      "Quạt máy",
+      "Tủ lạnh",
+      "Máy giặt",
+      "Máy ảnh"
+    ],
+    "answer": 3,
+    "explanation": "Máy ảnh dùng để chụp ảnh.",
+    "difficulty": "easy",
+    "topic": "Công nghệ",
+    "id": "q85"
+  },
+  {
+    "prompt": "11 × 3 + 4 bằng bao nhiêu?",
+    "options": [
+      "40",
+      "35",
+      "37",
+      "44"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 33 cộng 4 bằng 37.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q86"
+  },
+  {
+    "prompt": "12² - 2² bằng bao nhiêu?",
+    "options": [
+      "140",
+      "135",
+      "144",
+      "149"
+    ],
+    "answer": 0,
+    "explanation": "144 trừ 4 bằng 140.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q87"
+  },
+  {
+    "prompt": "Nước đá tan thành gì?",
+    "options": [
+      "Dầu",
+      "Muối",
+      "Cát",
+      "Nước lỏng"
+    ],
+    "answer": 3,
+    "explanation": "Nước đá tan thành nước lỏng.",
+    "difficulty": "easy",
+    "topic": "Khoa học",
+    "id": "q88"
+  },
+  {
+    "prompt": "12 × 4 + 5 bằng bao nhiêu?",
+    "options": [
+      "56",
+      "60",
+      "53",
+      "51"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 48 cộng 5 bằng 53.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q89"
+  },
+  {
+    "prompt": "13² - 2² bằng bao nhiêu?",
+    "options": [
+      "160",
+      "165",
+      "169",
+      "174"
+    ],
+    "answer": 1,
+    "explanation": "169 trừ 4 bằng 165.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q90"
+  },
+  {
+    "prompt": "Trong bốn mùa ở vùng ôn đới, mùa nào thường nóng nhất?",
+    "options": [
+      "Mùa xuân",
+      "Mùa hè",
+      "Mùa đông",
+      "Mùa thu"
+    ],
+    "answer": 1,
+    "explanation": "Mùa hè thường có thời tiết nóng.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q91"
+  },
+  {
+    "prompt": "13 × 5 + 6 bằng bao nhiêu?",
+    "options": [
+      "74",
+      "69",
+      "71",
+      "78"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 65 cộng 6 bằng 71.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q92"
+  },
+  {
+    "prompt": "14² - 2² bằng bao nhiêu?",
+    "options": [
+      "201",
+      "187",
+      "196",
+      "192"
+    ],
+    "answer": 3,
+    "explanation": "196 trừ 4 bằng 192.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q93"
+  },
+  {
+    "prompt": "Bữa ăn sáng thường diễn ra lúc nào?",
+    "options": [
+      "Buổi chiều",
+      "Buổi sáng",
+      "Nửa đêm",
+      "Buổi tối"
+    ],
+    "answer": 1,
+    "explanation": "Bữa sáng diễn ra vào buổi sáng.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q94"
+  },
+  {
+    "prompt": "14 × 6 + 7 bằng bao nhiêu?",
+    "options": [
+      "98",
+      "94",
+      "91",
+      "89"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 84 cộng 7 bằng 91.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q95"
+  },
+  {
+    "prompt": "15² - 2² bằng bao nhiêu?",
+    "options": [
+      "216",
+      "225",
+      "230",
+      "221"
+    ],
+    "answer": 3,
+    "explanation": "225 trừ 4 bằng 221.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q96"
+  },
+  {
+    "prompt": "Con vật nào có mai cứng?",
+    "options": [
+      "Chim sẻ",
+      "Rùa",
+      "Thỏ",
+      "Hươu"
+    ],
+    "answer": 1,
+    "explanation": "Rùa có mai cứng bảo vệ cơ thể.",
+    "difficulty": "easy",
+    "topic": "Động vật",
+    "id": "q97"
+  },
+  {
+    "prompt": "15 × 3 + 8 bằng bao nhiêu?",
+    "options": [
+      "53",
+      "56",
+      "51",
+      "60"
+    ],
+    "answer": 0,
+    "explanation": "Nhân trước rồi cộng: 45 cộng 8 bằng 53.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q98"
+  },
+  {
+    "prompt": "16² - 2² bằng bao nhiêu?",
+    "options": [
+      "252",
+      "261",
+      "256",
+      "247"
+    ],
+    "answer": 0,
+    "explanation": "256 trừ 4 bằng 252.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q99"
+  },
+  {
+    "prompt": "Một đôi giày gồm mấy chiếc?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "answer": 1,
+    "explanation": "Một đôi gồm hai chiếc.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q100"
+  },
+  {
+    "prompt": "16 × 4 + 9 bằng bao nhiêu?",
+    "options": [
+      "71",
+      "80",
+      "73",
+      "76"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 64 cộng 9 bằng 73.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q101"
+  },
+  {
+    "prompt": "8² - 3² bằng bao nhiêu?",
+    "options": [
+      "59",
+      "64",
+      "50",
+      "55"
+    ],
+    "answer": 3,
+    "explanation": "64 trừ 9 bằng 55.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q102"
+  },
+  {
+    "prompt": "Phương tiện nào chạy trên đường ray?",
+    "options": [
+      "Tàu hỏa",
+      "Thuyền",
+      "Xe đạp",
+      "Máy bay"
+    ],
+    "answer": 0,
+    "explanation": "Tàu hỏa chạy trên đường ray.",
+    "difficulty": "easy",
+    "topic": "Giao thông",
+    "id": "q103"
+  },
+  {
+    "prompt": "17 × 5 + 10 bằng bao nhiêu?",
+    "options": [
+      "98",
+      "102",
+      "93",
+      "95"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 85 cộng 10 bằng 95.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q104"
+  },
+  {
+    "prompt": "9² - 3² bằng bao nhiêu?",
+    "options": [
+      "72",
+      "67",
+      "76",
+      "81"
+    ],
+    "answer": 0,
+    "explanation": "81 trừ 9 bằng 72.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q105"
+  },
+  {
+    "prompt": "Cơ quan nào giúp con người nghe?",
+    "options": [
+      "Mũi",
+      "Lưỡi",
+      "Tai",
+      "Mắt"
+    ],
+    "answer": 2,
+    "explanation": "Tai là cơ quan thính giác.",
+    "difficulty": "easy",
+    "topic": "Khoa học",
+    "id": "q106"
+  },
+  {
+    "prompt": "18 × 6 + 11 bằng bao nhiêu?",
+    "options": [
+      "119",
+      "122",
+      "126",
+      "117"
+    ],
+    "answer": 0,
+    "explanation": "Nhân trước rồi cộng: 108 cộng 11 bằng 119.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q107"
+  },
+  {
+    "prompt": "10² - 3² bằng bao nhiêu?",
+    "options": [
+      "100",
+      "95",
+      "91",
+      "86"
+    ],
+    "answer": 2,
+    "explanation": "100 trừ 9 bằng 91.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q108"
+  },
+  {
+    "prompt": "Ngày sau thứ Hai là ngày nào?",
+    "options": [
+      "Thứ Ba",
+      "Chủ nhật",
+      "Thứ Sáu",
+      "Thứ Năm"
+    ],
+    "answer": 0,
+    "explanation": "Sau thứ Hai là thứ Ba.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q109"
+  },
+  {
+    "prompt": "7 × 7 + 12 bằng bao nhiêu?",
+    "options": [
+      "68",
+      "59",
+      "61",
+      "64"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 49 cộng 12 bằng 61.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q110"
+  },
+  {
+    "prompt": "11² - 3² bằng bao nhiêu?",
+    "options": [
+      "116",
+      "112",
+      "121",
+      "107"
+    ],
+    "answer": 1,
+    "explanation": "121 trừ 9 bằng 112.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q111"
+  },
+  {
+    "prompt": "Vật nào thường dùng để che mưa?",
+    "options": [
+      "Cốc",
+      "Chảo",
+      "Ô",
+      "Thước"
+    ],
+    "answer": 2,
+    "explanation": "Ô còn được gọi là dù.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q112"
+  },
+  {
+    "prompt": "8 × 8 + 13 bằng bao nhiêu?",
+    "options": [
+      "80",
+      "77",
+      "84",
+      "75"
+    ],
+    "answer": 1,
+    "explanation": "Nhân trước rồi cộng: 64 cộng 13 bằng 77.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q113"
+  },
+  {
+    "prompt": "12² - 3² bằng bao nhiêu?",
+    "options": [
+      "139",
+      "144",
+      "135",
+      "130"
+    ],
+    "answer": 2,
+    "explanation": "144 trừ 9 bằng 135.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q114"
+  },
+  {
+    "prompt": "Con bò thường ăn thức ăn nào?",
+    "options": [
+      "Nhựa",
+      "Sắt",
+      "Cỏ",
+      "Đá"
+    ],
+    "answer": 2,
+    "explanation": "Bò là động vật ăn cỏ.",
+    "difficulty": "easy",
+    "topic": "Động vật",
+    "id": "q115"
+  },
+  {
+    "prompt": "9 × 9 + 14 bằng bao nhiêu?",
+    "options": [
+      "95",
+      "98",
+      "93",
+      "102"
+    ],
+    "answer": 0,
+    "explanation": "Nhân trước rồi cộng: 81 cộng 14 bằng 95.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q116"
+  },
+  {
+    "prompt": "13² - 3² bằng bao nhiêu?",
+    "options": [
+      "160",
+      "169",
+      "155",
+      "164"
+    ],
+    "answer": 0,
+    "explanation": "169 trừ 9 bằng 160.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q117"
+  },
+  {
+    "prompt": "Chất nào tạo vị ngọt phổ biến trong bánh?",
+    "options": [
+      "Tiêu",
+      "Giấm",
+      "Đường",
+      "Muối"
+    ],
+    "answer": 2,
+    "explanation": "Đường tạo vị ngọt.",
+    "difficulty": "easy",
+    "topic": "Ẩm thực",
+    "id": "q118"
+  },
+  {
+    "prompt": "10 × 10 + 15 bằng bao nhiêu?",
+    "options": [
+      "118",
+      "113",
+      "122",
+      "115"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 100 cộng 15 bằng 115.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q119"
+  },
+  {
+    "prompt": "14² - 3² bằng bao nhiêu?",
+    "options": [
+      "187",
+      "182",
+      "191",
+      "196"
+    ],
+    "answer": 0,
+    "explanation": "196 trừ 9 bằng 187.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q120"
+  },
+  {
+    "prompt": "Trái chuối chín thường có vỏ màu gì?",
+    "options": [
+      "Đen tuyền",
+      "Xanh dương",
+      "Tím than",
+      "Vàng"
+    ],
+    "answer": 3,
+    "explanation": "Chuối chín thường có vỏ màu vàng.",
+    "difficulty": "easy",
+    "topic": "Ẩm thực",
+    "id": "q121"
+  },
+  {
+    "prompt": "11 × 7 + 16 bằng bao nhiêu?",
+    "options": [
+      "100",
+      "96",
+      "91",
+      "93"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 77 cộng 16 bằng 93.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q122"
+  },
+  {
+    "prompt": "15² - 3² bằng bao nhiêu?",
+    "options": [
+      "211",
+      "216",
+      "220",
+      "225"
+    ],
+    "answer": 1,
+    "explanation": "225 trừ 9 bằng 216.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q123"
+  },
+  {
+    "prompt": "Môn thể thao nào dùng vợt và quả cầu?",
+    "options": [
+      "Bóng đá",
+      "Cầu lông",
+      "Bơi lội",
+      "Chạy bộ"
+    ],
+    "answer": 1,
+    "explanation": "Cầu lông dùng vợt và quả cầu.",
+    "difficulty": "easy",
+    "topic": "Thể thao",
+    "id": "q124"
+  },
+  {
+    "prompt": "12 × 8 + 17 bằng bao nhiêu?",
+    "options": [
+      "120",
+      "116",
+      "111",
+      "113"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 96 cộng 17 bằng 113.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q125"
+  },
+  {
+    "prompt": "16² - 3² bằng bao nhiêu?",
+    "options": [
+      "247",
+      "256",
+      "242",
+      "251"
+    ],
+    "answer": 0,
+    "explanation": "256 trừ 9 bằng 247.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q126"
+  },
+  {
+    "prompt": "Tháng đầu tiên của năm dương lịch là tháng mấy?",
+    "options": [
+      "11",
+      "1",
+      "2",
+      "12"
+    ],
+    "answer": 1,
+    "explanation": "Tháng Một là tháng đầu năm.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q127"
+  },
+  {
+    "prompt": "13 × 9 + 18 bằng bao nhiêu?",
+    "options": [
+      "135",
+      "133",
+      "138",
+      "142"
+    ],
+    "answer": 0,
+    "explanation": "Nhân trước rồi cộng: 117 cộng 18 bằng 135.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q128"
+  },
+  {
+    "prompt": "8² - 4² bằng bao nhiêu?",
+    "options": [
+      "52",
+      "48",
+      "57",
+      "43"
+    ],
+    "answer": 1,
+    "explanation": "64 trừ 16 bằng 48.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q129"
+  },
+  {
+    "prompt": "Loài cây nào thường được trồng để lấy hạt làm cơm?",
+    "options": [
+      "Tre",
+      "Lúa",
+      "Cao su",
+      "Thông"
+    ],
+    "answer": 1,
+    "explanation": "Hạt lúa được xay thành gạo.",
+    "difficulty": "easy",
+    "topic": "Ẩm thực",
+    "id": "q130"
+  },
+  {
+    "prompt": "14 × 10 + 19 bằng bao nhiêu?",
+    "options": [
+      "157",
+      "166",
+      "162",
+      "159"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 140 cộng 19 bằng 159.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q131"
+  },
+  {
+    "prompt": "9² - 4² bằng bao nhiêu?",
+    "options": [
+      "69",
+      "60",
+      "74",
+      "65"
+    ],
+    "answer": 3,
+    "explanation": "81 trừ 16 bằng 65.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q132"
+  },
+  {
+    "prompt": "Một hình tam giác có mấy cạnh?",
+    "options": [
+      "2",
+      "5",
+      "3",
+      "4"
+    ],
+    "answer": 2,
+    "explanation": "Tam giác có ba cạnh.",
+    "difficulty": "easy",
+    "topic": "Toán học",
+    "id": "q133"
+  },
+  {
+    "prompt": "15 × 7 + 20 bằng bao nhiêu?",
+    "options": [
+      "128",
+      "132",
+      "125",
+      "123"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 105 cộng 20 bằng 125.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q134"
+  },
+  {
+    "prompt": "10² - 4² bằng bao nhiêu?",
+    "options": [
+      "79",
+      "93",
+      "84",
+      "88"
+    ],
+    "answer": 2,
+    "explanation": "100 trừ 16 bằng 84.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q135"
+  },
+  {
+    "prompt": "Chúng ta thường đánh răng bằng vật nào?",
+    "options": [
+      "Kéo",
+      "Lược",
+      "Búa",
+      "Bàn chải"
+    ],
+    "answer": 3,
+    "explanation": "Bàn chải dùng để đánh răng.",
+    "difficulty": "easy",
+    "topic": "Đời sống",
+    "id": "q136"
+  },
+  {
+    "prompt": "16 × 8 + 21 bằng bao nhiêu?",
+    "options": [
+      "156",
+      "147",
+      "152",
+      "149"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 128 cộng 21 bằng 149.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q137"
+  },
+  {
+    "prompt": "11² - 4² bằng bao nhiêu?",
+    "options": [
+      "109",
+      "105",
+      "114",
+      "100"
+    ],
+    "answer": 1,
+    "explanation": "121 trừ 16 bằng 105.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q138"
+  },
+  {
+    "prompt": "Chim di chuyển trên không bằng bộ phận nào?",
+    "options": [
+      "Cánh",
+      "Vây",
+      "Mai",
+      "Mang"
+    ],
+    "answer": 0,
+    "explanation": "Cánh giúp chim bay.",
+    "difficulty": "easy",
+    "topic": "Động vật",
+    "id": "q139"
+  },
+  {
+    "prompt": "17 × 9 + 22 bằng bao nhiêu?",
+    "options": [
+      "182",
+      "173",
+      "175",
+      "178"
+    ],
+    "answer": 2,
+    "explanation": "Nhân trước rồi cộng: 153 cộng 22 bằng 175.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q140"
+  },
+  {
+    "prompt": "12² - 4² bằng bao nhiêu?",
+    "options": [
+      "132",
+      "137",
+      "123",
+      "128"
+    ],
+    "answer": 3,
+    "explanation": "144 trừ 16 bằng 128.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q141"
+  },
+  {
+    "prompt": "Món phở thường được ăn bằng dụng cụ nào để gắp bánh?",
+    "options": [
+      "Búa",
+      "Thước",
+      "Kìm",
+      "Đũa"
+    ],
+    "answer": 3,
+    "explanation": "Đũa dùng để gắp bánh phở.",
+    "difficulty": "easy",
+    "topic": "Ẩm thực",
+    "id": "q142"
+  },
+  {
+    "prompt": "18 × 10 + 23 bằng bao nhiêu?",
+    "options": [
+      "206",
+      "210",
+      "201",
+      "203"
+    ],
+    "answer": 3,
+    "explanation": "Nhân trước rồi cộng: 180 cộng 23 bằng 203.",
+    "difficulty": "medium",
+    "topic": "Toán học",
+    "id": "q143"
+  },
+  {
+    "prompt": "13² - 4² bằng bao nhiêu?",
+    "options": [
+      "148",
+      "162",
+      "153",
+      "157"
+    ],
+    "answer": 2,
+    "explanation": "169 trừ 16 bằng 153.",
+    "difficulty": "hard",
+    "topic": "Toán học",
+    "id": "q144"
+  }
 ]

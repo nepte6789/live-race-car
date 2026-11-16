@@ -101,6 +101,18 @@ window.RewardVoice = class {
         return;
       this.lastBotAt = Date.now();
     }
+    if (kind === "welcome") {
+      if (
+        this.current?.kind === "welcome" &&
+        this.items.filter((x) => x.kind === "welcome").length >= 2
+      )
+        this.cancelCurrent();
+      const welcomes = this.items.filter((x) => x.kind === "welcome");
+      if (welcomes.length >= 3)
+        this.items = this.items.filter(
+          (x) => x !== welcomes[welcomes.length - 1],
+        );
+    }
     const message = {
       text,
       priority,
@@ -123,7 +135,8 @@ window.RewardVoice = class {
         this.items.unshift(resume);
       this.cancelCurrent();
       this.items.unshift(message);
-    } else this.items.push(message);
+    } else if (kind === "welcome") this.items.unshift(message);
+    else this.items.push(message);
     if (this.items.length > 30) {
       let weakest = 0;
       for (let i = 1; i < this.items.length; i++)

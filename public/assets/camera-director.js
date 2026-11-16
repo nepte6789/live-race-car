@@ -48,3 +48,13 @@ export function selectShot(
     ][shot],
   };
 }
+
+export function ceremonyView(game, now) {
+  const active =
+    game.phase === "finished" ||
+    (game.phase === "paused" && game.pausedPhase === "finished");
+  const elapsed = active
+    ? Math.max(0, 30 - (game.phaseDeadline - now) / 1000)
+    : 0;
+  return { active, panorama: active && elapsed >= 8, elapsed };
+}
