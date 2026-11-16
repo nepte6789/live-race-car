@@ -13,6 +13,8 @@ window.RewardVoice = class {
     this.current = null;
     this.generation = 0;
     this.timer = null;
+    this.quiet = false;
+    this.lastBotAt = -Infinity;
     this.synth?.addEventListener?.("voiceschanged", () => this.drain());
   }
   setEnabled(value) {
@@ -32,6 +34,26 @@ window.RewardVoice = class {
     this.items = [];
     this.cancelCurrent();
   }
+  rank(item) {
+    return item.priority >= 2
+      ? 100 + item.priority
+      : (item.demo ? -10 : 0) + item.priority;
+  }
+  setQuiet(value) {
+    const next = !!value;
+    if (next === this.quiet) return;
+    this.quiet = next;
+    if (next) {
+      this.items = this.items.filter(
+        (item) => !item.demo || item.priority >= 2,
+      );
+      if (this.current && this.current.priority < 2) {
+        if (!this.current.demo) this.items.unshift(this.current);
+        this.cancelCurrent();
+      }
+    }
+    this.drain();
+  }
   dropQuestions() {
     this.items = this.items.filter((item) => item.priority !== 2);
     if (this.current?.priority === 2) {
@@ -49,7 +71,13 @@ window.RewardVoice = class {
   enqueue(
     text,
     priority = 1,
-    { key = "", expiresAt = null, interrupt = false } = {},
+    {
+      key = "",
+      expiresAt = null,
+      interrupt = false,
+      demo = false,
+      kind = "",
+    } = {},
   ) {
     if (
       !this.enabled ||
@@ -62,16 +90,46 @@ window.RewardVoice = class {
       (this.current?.key === key || this.items.some((x) => x.key === key))
     )
       return;
-    const message = { text, priority, at: Date.now(), key, expiresAt };
+    if (demo && priority < 2) {
+      if (
+        kind !== "gift" ||
+        this.quiet ||
+        this.busy ||
+        this.items.length ||
+        Date.now() - this.lastBotAt < 60000
+      )
+        return;
+      this.lastBotAt = Date.now();
+    }
+    const message = {
+      text,
+      priority,
+      at: Date.now(),
+      key,
+      expiresAt,
+      demo,
+      kind,
+    };
+    if (
+      !demo &&
+      priority < 2 &&
+      this.current?.demo &&
+      this.current.priority < 2
+    )
+      this.cancelCurrent();
     if (interrupt) {
       const resume = this.current;
-      if (resume && resume.priority < 2) this.items.unshift(resume);
+      if (resume && resume.priority < 2 && !resume.demo)
+        this.items.unshift(resume);
       this.cancelCurrent();
       this.items.unshift(message);
     } else this.items.push(message);
     if (this.items.length > 30) {
-      const low = this.items.findIndex((x) => x.priority === 0);
-      this.items.splice(low < 0 ? this.items.length - 1 : low, 1);
+      let weakest = 0;
+      for (let i = 1; i < this.items.length; i++)
+        if (this.rank(this.items[i]) <= this.rank(this.items[weakest]))
+          weakest = i;
+      this.items.splice(weakest, 1);
     }
     this.drain();
   }
@@ -83,6 +141,13 @@ window.RewardVoice = class {
         (x.expiresAt === null || x.expiresAt > Date.now()),
     );
     if (!this.items.length) return;
+    let index = -1;
+    for (let i = 0; i < this.items.length; i++) {
+      if (this.quiet && this.items[i].priority < 2) continue;
+      if (index < 0 || this.rank(this.items[i]) > this.rank(this.items[index]))
+        index = i;
+    }
+    if (index < 0) return;
     if (!this.synth) {
       this.onWarning("Trình duyệt chưa hỗ trợ giọng đọc");
       return;
@@ -112,7 +177,7 @@ window.RewardVoice = class {
       this.onWarning("Thiếu giọng nữ VI · Cài An/Hoài My");
       return;
     }
-    const message = this.items.shift(),
+    const message = this.items.splice(index, 1)[0],
       u = this.makeUtterance(message.text),
       generation = this.generation;
     this.current = message;
