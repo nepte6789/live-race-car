@@ -2,7 +2,9 @@
 
 Game đua xe 3D kết nối TikTok LIVE, dựng theo cơ chế và không khí hai video tham chiếu: thành phố neon, 5 vòng đua, tên/avatar trên xe, TOP 10, minimap, câu hỏi A/B/C/D để tăng tốc, quà kích hoạt nitro/khiên/tên lửa/vòng xoáy. Đây là bản game chạy thật với hình học và vật liệu tự tạo, không phát lại video hay sao chép logo/tài sản của trò mẫu.
 
-![Xe F1 dát vàng và nitro trong bản chạy mô phỏng](docs/preview.png)
+![Bảng tên, huy hiệu và hướng dẫn tham gia trong bản chạy mô phỏng](docs/preview.png)
+
+![Chi tiết mẫu xe SPORT thân cong tự dựng](docs/model-detail.png)
 
 ![Bục trao giải top 3 trong bản chạy mô phỏng](docs/podium.png)
 
@@ -55,9 +57,13 @@ Bản đồ nhỏ và vị trí xe dùng cùng đường cong 3D; thời gian, t
 - **Đại gia bá khí**: đã tặng ít nhất một món trị giá từ 100 xu/món (không gộp nhiều quà nhỏ thành một quà lớn).
 - **Nhanh tay lẹ mắt**: tổng thời gian trả lời đúng thấp nhất trong ván sau khi chốt câu. Sai hoặc không trả lời cộng đủ 20 giây (theo thời lượng câu đã cài); người vào muộn cũng chịu thời gian các câu đã bỏ lỡ. Phải có ít nhất một câu đúng. Thời gian tạm dừng không được tính.
 
-Có thể có nhiều danh hiệu cùng lúc. Đáp án đúng chỉ được tô đậm/xanh sau khi hết giờ, ba đáp án khác mờ đi. Thanh màu dưới đáp án thu ngắn theo thời gian còn lại; 5 giây cuối chuyển đỏ. Overlay bỏ khung chat và đồng hồ tốc độ/năng lượng để dành chỗ cho cảnh đua. Nitro vẫn hoạt động với lửa đôi, lõi sáng, vệt dài, vòng sóng và góc nhìn mở rộng. Tốc độ cơ bản 64 m/s trong thang đo game; nitro cộng 38 m/s, vẫn giảm tốc nếu làn trước bị chắn.
+Tên/avatar trên xe có bảng tên phát sáng và huy hiệu với viền nguyệt quế. Cấp xe hiển thị màu xanh theo bậc Tân binh/Cao thủ/Huyền thoại; danh hiệu nằm trên các dải màu riêng (tim, quà, quà lớn, trả lời nhanh). Huy hiệu dẫn đầu dùng vương miện; các thành tích khác dùng biểu tượng phù hợp. Các cụm tên tránh chồng nhau và tránh che câu hỏi.
+
+Có thể có nhiều danh hiệu cùng lúc. Đáp án đúng chỉ được tô đậm/xanh sau khi hết giờ, ba đáp án khác mờ đi. Thanh màu dưới đáp án thu ngắn theo thời gian còn lại; 5 giây cuối chuyển đỏ. Overlay bỏ khung chat và đồng hồ tốc độ/năng lượng để dành chỗ cho cảnh đua. Hướng dẫn tham gia nằm ngay dưới Breaking News trong dải màu riêng. Thông báo nổi phía dưới đã bỏ để không lặp bản tin; lời đọc và hiệu ứng quà vẫn giữ. Bảng top 10 gọn thành một dòng/người, có tên/avatar, cấp và vòng/trạng thái về đích. Nitro vẫn hoạt động với lửa đôi, lõi sáng, vệt dài, vòng sóng và góc nhìn mở rộng. Tốc độ cơ bản 64 m/s trong thang đo game; nitro cộng 38 m/s, vẫn giảm tốc nếu làn trước bị chắn.
 
 ## Hình ảnh / giới hạn
+
+SPORT/GT dùng thân xe cong có vòm bánh, kính cong, nóc và viền kính, gương, đường viền cửa, hốc gió, lốp tròn và mâm mười chấu. SPORT bỏ cánh gió lớn; GT/F1 giữ cánh gió theo cấp. Thân và hốc gió F1 cũng được làm mềm lại. Các mẫu xe tự dựng từ hình học dùng chung, không tải model từ bên ngoài.
 
 Three.js dựng đường đua khép kín trên cao, nhà cửa, cửa sổ, xe và khiên từ hình học thủ tục; không cần API bản đồ hay tải asset ngoài trong lúc LIVE. Xe và tòa nhà dùng instancing để giảm draw call. Hiệu ứng và vật lý là arcade, không phải mô phỏng giao thông thực. Không có cược, tiền thưởng hoặc đổi điểm ra tiền.
 
@@ -71,4 +77,4 @@ npm test
 
 Luật được kiểm tra bằng Node; giao diện được kiểm tra trong Chromium. Việc chạy mô phỏng không thay thế kiểm tra một kênh TikTok đang LIVE. Server chỉ lắng nghe 127.0.0.1, kiểm tra Host/Origin, overlay nhận trạng thái nhưng không có quyền gửi lệnh điều khiển. Không phục vụ `.env` ra HTTP.
 
-Bản kiểm tra hiện tại: 25 kiểm thử luật đạt, gồm cấp xe, danh hiệu, thời gian trả lời có tạm dừng, góc máy và 100 xe giữ khoảng cách. Chromium kiểm tra các dáng SPORT/GT/F1, công bố đáp án và bục trao giải; đã kiểm tra khiên/tên lửa, pause/resume, chuyển góc máy, xóa mô phỏng, overlay không điều khiển được server và `.env` không được phục vụ. Đã thử cả trường hợp không có WebGL để hiện hướng dẫn thay vì trang trống. Chưa xác nhận kết nối với một phiên TikTok LIVE thật.
+Bản kiểm tra hiện tại: 28 kiểm thử luật/hình học đạt, gồm cấp xe, danh hiệu, thời gian trả lời có tạm dừng, góc máy và 100 xe giữ khoảng cách. Chromium kiểm tra các dáng SPORT/GT/F1, công bố đáp án và bục trao giải; đã kiểm tra khiên/tên lửa, pause/resume, chuyển góc máy, xóa mô phỏng, overlay không điều khiển được server và `.env` không được phục vụ. Đã thử cả trường hợp không có WebGL để hiện hướng dẫn thay vì trang trống. Chưa xác nhận kết nối với một phiên TikTok LIVE thật.

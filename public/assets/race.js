@@ -1,5 +1,6 @@
 import * as THREE from "/vendor/three.module.js";
 import { TRACK_POINTS } from "./track.js";
+import { buildCarGeometry } from "./car-model.js";
 import { selectShot } from "./camera-director.js";
 const $ = (id) => document.getElementById(id),
   stage = $("stage");
@@ -368,10 +369,13 @@ if (webgl) {
   environment.colorSpace = THREE.SRGBColorSpace;
   scene.environment = environment;
   awardScene.environment = environment;
-  const material = new THREE.MeshStandardMaterial({
+  const vehicle = buildCarGeometry(THREE);
+  const material = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
-    metalness: 0.88,
-    roughness: 0.25,
+    metalness: 0.55,
+    roughness: 0.22,
+    clearcoat: 1,
+    clearcoatRoughness: 0.12,
   });
   function inst(name, geometry, mat, count = MAX) {
     const m = new THREE.InstancedMesh(geometry, mat, count);
@@ -381,49 +385,21 @@ if (webgl) {
     instances[name] = m;
     return m;
   }
-  // Beveled sports-car silhouette, shared by every instanced driver.
-  const outline = new THREE.Shape();
-  outline.moveTo(-1.35, -3);
-  outline.lineTo(1.35, -3);
-  outline.lineTo(1.65, -2.2);
-  outline.lineTo(1.55, 2.25);
-  outline.lineTo(1.15, 3);
-  outline.lineTo(-1.15, 3);
-  outline.lineTo(-1.55, 2.25);
-  outline.lineTo(-1.65, -2.2);
-  outline.closePath();
-  const shell = new THREE.ExtrudeGeometry(outline, {
-    depth: 0.65,
-    bevelEnabled: true,
-    bevelSize: 0.13,
-    bevelThickness: 0.12,
-    bevelSegments: 3,
-    steps: 1,
-  });
-  shell.rotateX(Math.PI / 2);
-  shell.translate(0, 0.32, 0);
-  inst("body", shell, material);
-  const formulaOutline = new THREE.Shape();
-  formulaOutline.moveTo(-0.5, -3);
-  formulaOutline.lineTo(0.5, -3);
-  formulaOutline.lineTo(0.85, -1.6);
-  formulaOutline.lineTo(0.65, 1);
-  formulaOutline.lineTo(0.32, 3.4);
-  formulaOutline.lineTo(-0.32, 3.4);
-  formulaOutline.lineTo(-0.65, 1);
-  formulaOutline.lineTo(-0.85, -1.6);
-  formulaOutline.closePath();
-  const formulaGeometry = new THREE.ExtrudeGeometry(formulaOutline, {
-    depth: 0.55,
-    bevelEnabled: true,
-    bevelSize: 0.08,
-    bevelThickness: 0.08,
-    bevelSegments: 2,
-    steps: 1,
-  });
-  formulaGeometry.rotateX(Math.PI / 2);
-  inst("formulaBody", formulaGeometry, material);
-  inst("sidePods", new THREE.BoxGeometry(0.8, 0.48, 2.6), material, MAX * 2);
+  inst("body", vehicle.body, material);
+  inst("roof", vehicle.roof, material);
+  inst("frames", vehicle.frames, material);
+  inst("mirrors", vehicle.mirrors, material);
+  inst(
+    "trim",
+    vehicle.trim,
+    new THREE.MeshStandardMaterial({
+      color: 0x0b1521,
+      metalness: 0.3,
+      roughness: 0.4,
+    }),
+  );
+  inst("formulaBody", vehicle.formula, material);
+  inst("sidePods", vehicle.sidePod, material, MAX * 2);
   inst("frontWing", new THREE.BoxGeometry(3.65, 0.12, 0.6), material);
   inst(
     "cockpit",
@@ -501,49 +477,28 @@ if (webgl) {
     }),
   );
 
-  // A tapered cabin with sloped windscreens instead of a rectangular box.
-  const cabin = new THREE.BufferGeometry();
-  cabin.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(
-      [
-        -1.2, -0.45, -1.5, 1.2, -0.45, -1.5, 1.2, -0.45, 1.4, -1.2, -0.45, 1.4,
-        -0.92, 0.45, -0.9, 0.92, 0.45, -0.9, 0.92, 0.45, 0.55, -0.92, 0.45,
-        0.55,
-      ],
-      3,
-    ),
-  );
-  cabin.setIndex([
-    0, 1, 5, 0, 5, 4, 1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6, 3, 0, 4, 3, 4, 7, 4,
-    5, 6, 4, 6, 7, 3, 2, 1, 3, 1, 0,
-  ]);
-  const faces = cabin.index.array;
-  for (let face = 0; face < faces.length; face += 3) {
-    const first = faces[face];
-    faces[face] = faces[face + 2];
-    faces[face + 2] = first;
-  }
-  cabin.computeVertexNormals();
-  inst("roof", new THREE.BoxGeometry(1.88, 0.08, 1.5), material);
-  inst(
-    "stripes",
-    new THREE.BoxGeometry(0.22, 0.035, 1.65),
-    new THREE.MeshStandardMaterial({ color: 0xf1f6ff }),
-    MAX * 2,
-  );
   inst(
     "grille",
-    new THREE.BoxGeometry(1.6, 0.24, 0.15),
-    new THREE.MeshStandardMaterial({ color: 0x07101b }),
+    vehicle.grille,
+    new THREE.MeshStandardMaterial({ color: 0x07101b, roughness: 0.6 }),
   );
   inst(
     "hubs",
-    new THREE.CylinderGeometry(0.4, 0.4, 0.54, 8),
+    vehicle.rims,
     new THREE.MeshStandardMaterial({
-      color: 0xbac9dd,
+      color: 0xd3dce7,
       metalness: 0.9,
-      roughness: 0.22,
+      roughness: 0.19,
+    }),
+    MAX * 4,
+  );
+  inst(
+    "brakes",
+    vehicle.brakeDisc,
+    new THREE.MeshStandardMaterial({
+      color: 0x343941,
+      metalness: 0.65,
+      roughness: 0.45,
     }),
     MAX * 4,
   );
@@ -553,33 +508,34 @@ if (webgl) {
     new THREE.MeshStandardMaterial({ color: 0x101725 }),
     MAX * 2,
   );
-  inst("hood", new THREE.BoxGeometry(3, 0.18, 2), material);
   inst(
     "cabin",
-    cabin,
-    new THREE.MeshStandardMaterial({
-      color: 0x091a30,
-      metalness: 0.85,
-      roughness: 0.1,
+    vehicle.glass,
+    new THREE.MeshPhysicalMaterial({
+      color: 0x101f30,
+      metalness: 0.15,
+      roughness: 0.08,
+      clearcoat: 1,
+      clearcoatRoughness: 0.04,
     }),
   );
-  inst("spoiler", new THREE.BoxGeometry(3.7, 0.12, 0.65), material);
+  inst("spoiler", new THREE.BoxGeometry(3.5, 0.1, 0.55), material);
   inst(
     "wheels",
-    new THREE.CylinderGeometry(0.65, 0.65, 0.5, 20),
-    new THREE.MeshStandardMaterial({ color: 0x06080e, roughness: 0.8 }),
+    vehicle.tyre,
+    new THREE.MeshStandardMaterial({ color: 0x0c1017, roughness: 0.85 }),
     MAX * 4,
   );
   inst(
     "lights",
-    new THREE.BoxGeometry(0.65, 0.2, 0.12),
-    new THREE.MeshBasicMaterial({ color: 0xd9fbff }),
+    vehicle.headlight,
+    new THREE.MeshBasicMaterial({ color: 0xd6f6ff, toneMapped: false }),
     MAX * 2,
   );
   inst(
     "rearLights",
-    new THREE.BoxGeometry(0.7, 0.18, 0.12),
-    new THREE.MeshBasicMaterial({ color: 0xff2966 }),
+    vehicle.taillight,
+    new THREE.MeshBasicMaterial({ color: 0xff3456, toneMapped: false }),
     MAX * 2,
   );
   inst(
@@ -622,7 +578,6 @@ let state = null,
   lastEvent = 0,
   focusId = null,
   focusUntil = 0,
-  toastUntil = 0,
   effectUntil = 0,
   focusRacer = null,
   labelSafeTop = 650,
@@ -657,6 +612,101 @@ function avatar(p) {
   }
   return el;
 }
+const emblemPaths = {
+  crown: "M12 23 9 12 17 17 22 8 27 17 35 12 32 23Z M12 26H32V30H12Z",
+  wealth: "M13 11H31L36 18 22 33 8 18Z M13 11 18 18 22 33 26 18 31 11 M8 18H36",
+  gift: "M11 20H33V32H11Z M8 15H36V21H8Z M20 15V32 M22 15C8 14 13 4 20 10L22 15C36 14 31 4 24 10Z",
+  heart: "M22 32C-2 18 12 4 22 15 32 4 46 18 22 32Z",
+  quick: "M25 7 12 23H21L18 35 33 17H24Z",
+  star: "M22 9 25 17 34 17 27 23 30 32 22 27 14 32 17 23 10 17 19 17Z",
+};
+function makeCrest() {
+  const crest = document.createElement("span");
+  crest.className = "crest";
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 44 44");
+  svg.setAttribute("aria-hidden", "true");
+  for (const [className, d] of [
+    ["crest-shield", "M22 3 36 8 34 27 22 39 10 27 8 8Z"],
+    [
+      "crest-laurel",
+      "M10 35C0 27 1 15 5 10 M8 30 2 28 M6 24 1 22 M5 18 1 15 M34 35C44 27 43 15 39 10 M36 30 42 28 M38 24 43 22 M39 18 43 15",
+    ],
+    ["crest-icon", emblemPaths.star],
+  ]) {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("class", className);
+    path.setAttribute("d", d);
+    svg.append(path);
+  }
+  crest.append(svg);
+  return crest;
+}
+function updateRacerBadge(el, p) {
+  const signature = JSON.stringify([
+    p.level,
+    p.model,
+    p.gold,
+    p.spinning,
+    p.shielded,
+    p.boosted,
+    p.honors,
+  ]);
+  if (el.dataset.signature === signature) return;
+  el.dataset.signature = signature;
+  const badge = el.querySelector(".badge");
+  badge.replaceChildren();
+  const level = document.createElement("span");
+  level.className = "level";
+  const tier =
+    p.level >= 10 ? "HUYỀN THOẠI" : p.level >= 5 ? "CAO THỦ" : "TÂN BINH";
+  level.textContent = `${tier} · CẤP ${p.level}`;
+  badge.append(level);
+  const categories = ["heart", "gift", "wealth", "quick"];
+  const titles = [
+    "Chuyên gia thả tim",
+    "Đại hiệp tặng quà",
+    "Đại gia bá khí",
+    "Nhanh tay lẹ mắt",
+  ];
+  for (const title of p.honors || []) {
+    const tag = document.createElement("span");
+    tag.className = "honor " + (categories[titles.indexOf(title)] || "gift");
+    tag.textContent = title;
+    badge.append(tag);
+  }
+  const stateText = p.spinning
+    ? "XOAY VÒNG"
+    : p.shielded
+      ? "KHIÊN BẢO VỆ"
+      : p.boosted
+        ? "NITRO TĂNG TỐC"
+        : "";
+  if (stateText) {
+    const status = document.createElement("span");
+    status.className = "status";
+    status.textContent = stateText;
+    badge.append(status);
+  }
+  const emblem = p.gold
+    ? "crown"
+    : p.honors?.includes(titles[2])
+      ? "wealth"
+      : p.honors?.includes(titles[1])
+        ? "gift"
+        : p.honors?.includes(titles[0])
+          ? "heart"
+          : p.honors?.includes(titles[3])
+            ? "quick"
+            : "star";
+  const crest = el.querySelector(".crest");
+  crest.dataset.emblem = emblem;
+  crest.setAttribute(
+    "aria-label",
+    p.gold ? "Huy hiệu dẫn đầu" : `Huy hiệu cấp ${p.level}`,
+  );
+  crest.querySelector(".crest-icon").setAttribute("d", emblemPaths[emblem]);
+}
 const voice = new RewardVoice({
   onSpeaking: (yes) => music?.duck(yes),
   onWarning: (s) => ($("sound").textContent = s),
@@ -685,12 +735,6 @@ function showEvent(e) {
       focusId = e.userId;
       focusUntil = Date.now() + 5000;
     }
-    $("giftToast").replaceChildren(avatar(e));
-    const text = document.createElement("span");
-    text.textContent = e.text;
-    $("giftToast").append(text);
-    $("giftToast").hidden = false;
-    toastUntil = Date.now() + 4500;
     if (soundOn && ["gift", "winner", "welcome"].includes(e.type))
       voice.enqueue(
         e.type === "gift"
@@ -747,12 +791,13 @@ function render(m) {
       meta = document.createElement("span");
     info.className = "rank-info";
     meta.className = "rank-meta";
-    meta.textContent = `CẤP ${p.level} · ${p.model === "formula" ? "F1" : p.model === "gt" ? "GT" : "SPORT"}`;
+    meta.textContent = `Lv.${p.level}`;
     name.className = "rank-name";
     name.textContent = p.name;
-    lap.textContent = p.finishedAt ? "🏁" : `V${p.lap}`;
-    info.append(name, meta);
-    li.append(rank, avatar(p), info, lap);
+    lap.textContent = p.finishedAt ? "✓" : `V${p.lap}`;
+    li.className = p.finishedAt ? "finished" : "";
+    info.append(name);
+    li.append(rank, avatar(p), info, meta, lap);
     $("ranking").append(li);
   }
   const awardMode =
@@ -955,70 +1000,46 @@ function animate() {
       const formula = p.model === "formula",
         gt = p.model === "gt",
         normal = formula ? 0 : 1;
-      const shellScale = gt ? 0.88 : 1;
-      setPart(
-        instances.body,
-        i,
-        f,
-        0,
-        0.55,
-        0,
-        normal,
-        normal * shellScale,
-        normal,
-      );
-      setPart(
-        instances.hood,
-        i,
-        f,
-        0,
-        gt ? 0.91 : 1,
-        1.8,
-        normal,
-        normal,
-        normal,
-      );
-      setPart(
-        instances.cabin,
-        i,
-        f,
-        0,
-        gt ? 1.12 : 1.35,
-        -0.25,
-        normal,
-        normal * (gt ? 0.72 : 1),
-        normal,
-      );
-      setPart(
-        instances.roof,
-        i,
-        f,
-        0,
-        gt ? 1.47 : 1.83,
-        -0.42,
-        normal,
-        normal,
-        normal,
-      );
-      setPart(instances.grille, i, f, 0, 0.46, 3.18, normal, normal, normal);
+      const bodyHeight = gt ? 0.93 : 1;
+      for (const name of ["body", "cabin", "roof", "frames", "mirrors", "trim"])
+        setPart(
+          instances[name],
+          i,
+          f,
+          0,
+          0,
+          0,
+          normal,
+          normal *
+            (name === "cabin" || name === "roof" || name === "frames"
+              ? gt
+                ? 0.93
+                : 1
+              : bodyHeight),
+          normal,
+        );
+      setPart(instances.grille, i, f, 0, 0.13, 3.23, normal, normal, normal);
+      const wing = gt || formula ? 1 : 0;
       setPart(
         instances.spoiler,
         i,
         f,
         0,
-        formula ? 1.4 : gt ? 1.65 : 1.55,
-        -2.5,
-        1,
-        formula ? 2 : 1,
-        formula ? 1.65 : 1,
+        formula ? 1.4 : 1.3,
+        -2.55,
+        wing,
+        wing * (formula ? 2 : 1),
+        wing * (formula ? 1.65 : 1),
       );
       if (p.gold) color.setHex(0xffb619);
-      else color.setHSL(p.hue / 360, 0.78, 0.52);
+      else if (p.joined % 5 === 0) color.setHex(0xe8eef7);
+      else color.setHSL(p.hue / 360, 0.52, 0.56);
       for (const name of [
         "body",
-        "hood",
-        "spoiler",
         "roof",
+        "frames",
+        "mirrors",
+        "spoiler",
         "formulaBody",
         "frontWing",
         "sidePods",
@@ -1031,7 +1052,7 @@ function animate() {
         i,
         f,
         0,
-        0.8,
+        0,
         0,
         formula ? 1 : 0,
         formula ? 1 : 0,
@@ -1084,79 +1105,61 @@ function animate() {
           formula ? 1 : 0,
         );
         setPart(
-          instances.stripes,
-          i * 2 + side,
-          f,
-          side ? 0.42 : -0.42,
-          gt ? 1.025 : 1.115,
-          1.88,
-          normal,
-          normal,
-          normal,
-        );
-        setPart(
           instances.wingPosts,
           i * 2 + side,
           f,
           side ? 1.1 : -1.1,
-          1.25,
-          -2.5,
+          formula ? 1.15 : 1.1,
+          -2.55,
+          wing,
+          wing,
+          wing,
         );
       }
-      for (let wheel = 0; wheel < 4; wheel++)
-        setPart(
-          instances.hubs,
-          i * 4 + wheel,
-          f,
-          wheel % 2 ? 1.68 : -1.68,
-          0.05,
-          wheel < 2 ? 1.9 : -1.9,
-          1,
-          1,
-          1,
-          f.progress / 0.65,
-          wheel < 2 ? (p.steering || 0) * 2 : 0,
-          Math.PI / 2,
-        );
-      for (let wheel = 0; wheel < 4; wheel++)
-        setPart(
-          instances.wheels,
-          i * 4 + wheel,
-          f,
-          wheel % 2 ? 1.65 : -1.65,
-          0.05,
-          wheel < 2 ? 1.9 : -1.9,
-          1,
-          1,
-          1,
-          0,
-          0,
-          Math.PI / 2,
-        );
-      for (let l = 0; l < 2; l++)
+      for (let wheel = 0; wheel < 4; wheel++) {
+        const steer = wheel < 2 ? (p.steering || 0) * 2 : 0;
+        for (const name of ["wheels", "hubs", "brakes"])
+          setPart(
+            instances[name],
+            i * 4 + wheel,
+            f,
+            wheel % 2 ? 1.6 : -1.6,
+            0.02,
+            wheel < 2 ? 1.9 : -1.9,
+            1,
+            1,
+            1,
+            f.progress / 0.65,
+            steer,
+            0,
+          );
+      }
+      for (let side = 0; side < 2; side++) {
         setPart(
           instances.lights,
-          i * 2 + l,
+          i * 2 + side,
           f,
-          l ? 1 : -1,
-          0.67,
-          3.18,
+          side ? 1.1 : -1.1,
+          0.44,
+          2.8,
           normal,
           normal,
           normal,
+          0,
+          side ? 0.2 : -0.2,
         );
-      for (let rear = 0; rear < 2; rear++)
         setPart(
           instances.rearLights,
-          i * 2 + rear,
+          i * 2 + side,
           f,
-          formula ? (rear ? 0.3 : -0.3) : rear ? 1 : -1,
-          0.67,
-          -3.18,
-          formula ? 0.6 : 1,
+          formula ? (side ? 0.3 : -0.3) : side ? 0.95 : -0.95,
+          formula ? 0.6 : 0.42,
+          formula ? -3.12 : -3.05,
+          formula ? 0.65 : 1,
           1,
           1,
         );
+      }
       const boost = p.boosted && g.phase === "racing" && !p.finishedAt;
       const pulse = 1 + Math.sin(effectiveNow / 65 + i) * 0.18,
         on = boost ? 1 : 0;
@@ -1263,12 +1266,11 @@ function animate() {
     for (const [name, mesh] of Object.entries(instances)) {
       mesh.count =
         active.length *
-        (["wheels", "hubs"].includes(name)
+        (["wheels", "hubs", "brakes"].includes(name)
           ? 4
           : [
                 "lights",
                 "rearLights",
-                "stripes",
                 "wingPosts",
                 "sidePods",
                 "flames",
@@ -1356,7 +1358,7 @@ function animate() {
       for (const p of labelOrder) {
         const cf = carFrames.get(p.id);
         world.copy(cf.pos);
-        world.y += 4;
+        world.y += 2.2;
         world.project(viewCamera);
         let el = labels.get(p.id);
         const visible =
@@ -1373,14 +1375,14 @@ function animate() {
         }
         const px = (world.x * 0.5 + 0.5) * 1080,
           py = Math.max(
-            labelSafeTop + 70 + (p.honors?.length || 0) * 24,
+            labelSafeTop + 100 + (p.honors?.length || 0) * 30,
             (-world.y * 0.5 + 0.5) * 1920,
           ),
-          width = Math.min(230, 75 + p.name.length * 8),
+          width = Math.min(310, Math.max(200, 120 + p.name.length * 8)),
           rect = {
             l: px - width / 2,
             r: px + width / 2,
-            t: py - 70 - (p.honors?.length || 0) * 24,
+            t: py - 100 - (p.honors?.length || 0) * 30,
             b: py + 4,
           };
         if (
@@ -1402,7 +1404,7 @@ function animate() {
           name.className = "name";
           const badge = document.createElement("span");
           badge.className = "badge";
-          el.append(avatar(p), rank, name, badge);
+          el.append(avatar(p), rank, name, makeCrest(), badge);
           $("labels").append(el);
           labels.set(p.id, el);
         }
@@ -1411,17 +1413,7 @@ function animate() {
         el.style.top = py + "px";
         el.querySelector(".rank").textContent = p.rank;
         el.querySelector(".name").textContent = p.name;
-        const badge = el.querySelector(".badge");
-        badge.replaceChildren();
-        const level = document.createElement("span");
-        level.className = "level";
-        level.textContent = `CẤP ${p.level} · ${p.model === "formula" ? "F1" : p.model === "gt" ? "GT" : "SPORT"}${p.spinning ? " · 🌀 XOAY" : p.shielded ? " · 🛡 KHIÊN" : p.boosted ? " · ⚡ NITRO" : ""}`;
-        badge.append(level);
-        for (const title of p.honors || []) {
-          const tag = document.createElement("span");
-          tag.textContent = title;
-          badge.append(tag);
-        }
+        updateRacerBadge(el, p);
         el.classList.toggle("gold", p.gold);
         el.classList.toggle("boosted", p.boosted);
         el.classList.toggle("shielded", p.shielded);
@@ -1513,7 +1505,6 @@ function uiTimer() {
         ? "🛡 KHIÊN BẢO VỆ"
         : "⚡ NITRO";
   }
-  if (Date.now() > toastUntil) $("giftToast").hidden = true;
 }
 const map = $("minimap").getContext("2d"),
   mapPoints = Array.from({ length: 160 }, (_, i) => curve.getPointAt(i / 159));
