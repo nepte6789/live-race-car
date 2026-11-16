@@ -35,9 +35,9 @@ Node hỗ trợ process.loadEnvFile sẽ tự nạp `.env`; có thể dùng `nod
 
 ## Luật của bản dựng
 
-- Bình luận bất kỳ để lên xe. Trả lời A/B/C/D có thể vừa tham gia vừa chốt đáp án. Giới hạn 100 tay đua, không đẩy người thật ra khi đủ chỗ. Tham gia giữa ván được đặt sau đoàn cuối 30 m để có thể nhập cuộc.
+- Thả tim hoặc bình luận để lên xe. Trả lời A/B/C/D có thể vừa tham gia vừa chốt đáp án. Giới hạn 100 tay đua, không đẩy người thật ra khi đủ chỗ. Tham gia giữa ván được đặt sau đoàn cuối 30 m để có thể nhập cuộc.
 - Mặc định 5 vòng, mỗi vòng 2.400 m trong thang đo game. Xe tự chạy, xuất phát theo hàng bốn xe để không chồng xe lên nhau. Đúng một câu +20 XP và nitro 5 giây; chỉ tính đáp án đầu tiên. Câu mở 20 giây, công bố đáp án/giải thích 8 giây rồi sang câu. Có 24 câu khởi đầu, sửa được trong data/questions.json trước khi chạy.
-- Mỗi 10 tim +3% năng lượng, giữ phần dư từng người. Đủ 100% tự nitro 5 giây. Bình luận NITRO/BOOST khi có 30% để dùng nitro 4 giây; trái/phải để đổi làn.
+- Mỗi 10 tim +3% năng lượng, giữ phần dư từng người. Đủ 100% tự nitro 5 giây. Bình luận NITRO/BOOST khi có 30% để dùng nitro 4 giây; trái/phải để xin đổi làn khi có khoảng trống. Xe nhanh tự tìm làn để vượt; khi bị chắn sẽ giảm tốc giữ khoảng cách. Chỉ cần 1 tim để lên xe, không cần nhắn tin.
 - Follow +20% năng lượng, +10 XP, nitro 2 giây khi đang đua; chỉ tính thưởng một lần/người/ván. Mục tiêu follow hiển thị số nền do chủ LIVE đặt + follow thật nhận trong phiên, không tính người thử hoặc suy ra tổng follower kênh.
 - Quà dưới 10 xu/món: nitro ngắn. Từ 10 xu: khiên 8 giây. Từ 50 xu: tên lửa làm chậm đối thủ dẫn đầu khác mình 3 giây. Từ 100 xu: thêm xoay xe 2,2 giây. Khiên chặn các đòn đó. Ngưỡng đổi được trong điều khiển, chỉ sửa luật khi ở sảnh/sau ván. Đây là quy đổi của bản dựng; video không cung cấp đủ bảng quy đổi để khẳng định trùng game gốc.
 - Combo quà chỉ tính phần tăng mới, không cộng lặp khi kết thúc combo. Nitro tối đa còn 12 giây, khiên tối đa 20 giây; quà lớn không khiến xe tăng tốc vô hạn. XP nâng cấp màu/hiệu ứng xe, không dùng hình xe có thương hiệu.

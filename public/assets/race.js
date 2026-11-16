@@ -139,7 +139,7 @@ function buildCity() {
     dummy = new THREE.Object3D();
   let k = 0;
   for (let i = 0; i < dashCount; i++)
-    for (const lane of [-4.7, 0, 4.7]) {
+    for (const lane of [-4, 0, 4]) {
       const f = frameAt(i / dashCount);
       dummy.position.copy(f.pos).addScaledVector(f.right, lane);
       dummy.position.y += 0.04;
@@ -282,11 +282,84 @@ if (webgl) {
     instances[name] = m;
     return m;
   }
-  inst("body", new THREE.BoxGeometry(3.2, 0.8, 6), material);
+  // Beveled sports-car silhouette, shared by every instanced driver.
+  const outline = new THREE.Shape();
+  outline.moveTo(-1.35, -3);
+  outline.lineTo(1.35, -3);
+  outline.lineTo(1.65, -2.2);
+  outline.lineTo(1.55, 2.25);
+  outline.lineTo(1.15, 3);
+  outline.lineTo(-1.15, 3);
+  outline.lineTo(-1.55, 2.25);
+  outline.lineTo(-1.65, -2.2);
+  outline.closePath();
+  const shell = new THREE.ExtrudeGeometry(outline, {
+    depth: 0.65,
+    bevelEnabled: true,
+    bevelSize: 0.13,
+    bevelThickness: 0.12,
+    bevelSegments: 3,
+    steps: 1,
+  });
+  shell.rotateX(Math.PI / 2);
+  shell.translate(0, 0.32, 0);
+  inst("body", shell, material);
+  // A tapered cabin with sloped windscreens instead of a rectangular box.
+  const cabin = new THREE.BufferGeometry();
+  cabin.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(
+      [
+        -1.2, -0.45, -1.5, 1.2, -0.45, -1.5, 1.2, -0.45, 1.4, -1.2, -0.45, 1.4,
+        -0.92, 0.45, -0.9, 0.92, 0.45, -0.9, 0.92, 0.45, 0.55, -0.92, 0.45,
+        0.55,
+      ],
+      3,
+    ),
+  );
+  cabin.setIndex([
+    0, 1, 5, 0, 5, 4, 1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6, 3, 0, 4, 3, 4, 7, 4,
+    5, 6, 4, 6, 7, 3, 2, 1, 3, 1, 0,
+  ]);
+  const faces = cabin.index.array;
+  for (let face = 0; face < faces.length; face += 3) {
+    const first = faces[face];
+    faces[face] = faces[face + 2];
+    faces[face + 2] = first;
+  }
+  cabin.computeVertexNormals();
+  inst("roof", new THREE.BoxGeometry(1.88, 0.08, 1.5), material);
+  inst(
+    "stripes",
+    new THREE.BoxGeometry(0.22, 0.035, 1.65),
+    new THREE.MeshStandardMaterial({ color: 0xf1f6ff }),
+    MAX * 2,
+  );
+  inst(
+    "grille",
+    new THREE.BoxGeometry(1.6, 0.24, 0.15),
+    new THREE.MeshStandardMaterial({ color: 0x07101b }),
+  );
+  inst(
+    "hubs",
+    new THREE.CylinderGeometry(0.4, 0.4, 0.54, 8),
+    new THREE.MeshStandardMaterial({
+      color: 0xbac9dd,
+      metalness: 0.9,
+      roughness: 0.22,
+    }),
+    MAX * 4,
+  );
+  inst(
+    "wingPosts",
+    new THREE.BoxGeometry(0.13, 0.45, 0.18),
+    new THREE.MeshStandardMaterial({ color: 0x101725 }),
+    MAX * 2,
+  );
   inst("hood", new THREE.BoxGeometry(3, 0.18, 2), material);
   inst(
     "cabin",
-    new THREE.BoxGeometry(2.45, 0.9, 2.55),
+    cabin,
     new THREE.MeshStandardMaterial({
       color: 0x091a30,
       metalness: 0.85,
@@ -296,7 +369,7 @@ if (webgl) {
   inst("spoiler", new THREE.BoxGeometry(3.7, 0.12, 0.65), material);
   inst(
     "wheels",
-    new THREE.CylinderGeometry(0.65, 0.65, 0.5, 10),
+    new THREE.CylinderGeometry(0.65, 0.65, 0.5, 20),
     new THREE.MeshStandardMaterial({ color: 0x06080e, roughness: 0.8 }),
     MAX * 4,
   );
@@ -524,7 +597,8 @@ function render(m) {
       }
     }
   } else {
-    $("prompt").textContent = "Bình luận để lên xe. Sẵn sàng bứt tốc?";
+    $("prompt").textContent =
+      "Thả tim hoặc bình luận để lên xe. Sẵn sàng bứt tốc?";
     $("answered").textContent = "";
     $("explanation").hidden = true;
   }
@@ -541,7 +615,12 @@ function carTransform(p, now, dt) {
   else progress += (predicted - progress) * (1 - Math.exp(-dt * 12));
   positions.set(p.id, progress);
   const f = frameAt(progress / state.game.config.trackLength);
-  f.pos.addScaledVector(f.right, p.lane);
+  const effective =
+    state.game.phase === "paused" ? state.game.effectiveTime : now + offset;
+  const parked = p.finishedAt
+    ? Math.min(1, Math.max(0, (effective - p.finishedAt) / 1200))
+    : 0;
+  f.pos.addScaledVector(f.right, p.lane + (p.lane < 0 ? -1 : 1) * parked * 14);
   f.pos.y += 0.68;
   return { ...f, progress };
 }
@@ -572,7 +651,7 @@ let clock = new THREE.Clock(),
 const carFrames = new Map();
 function animate() {
   requestAnimationFrame(animate);
-  const dt = Math.min(0.05, clock.getDelta()),
+  const dt = Math.min(0.5, clock.getDelta()),
     now = Date.now();
   frame++;
   if (!state) {
@@ -605,13 +684,18 @@ function animate() {
             9
           : 0;
       dummy.position.copy(f.pos);
-      dummy.rotation.set(0, f.yaw + spin, 0);
+      dummy.rotation.set(
+        -Math.asin(f.tangent.y),
+        f.yaw + spin + (p.steering || 0),
+        -(p.steering || 0) * 0.3,
+        "YXZ",
+      );
       const close =
         p.id !== focusRacer?.id && camera.position.distanceTo(f.pos) < 10;
       dummy.scale.setScalar(close ? 0 : 1);
       dummy.updateMatrix();
       rootMatrix.copy(dummy.matrix);
-      setPart(instances.body, i, f, 0, 0.55, 0, 1 + p.tier * 0.03, 1, 1);
+      setPart(instances.body, i, f, 0, 0.55, 0, 1, 1, 1);
       setPart(instances.hood, i, f, 0, 1, 1.8);
       setPart(instances.cabin, i, f, 0, 1.35, -0.25);
       setPart(
@@ -629,6 +713,42 @@ function animate() {
       instances.body.setColorAt(i, color);
       instances.hood.setColorAt(i, color);
       instances.spoiler.setColorAt(i, color);
+      instances.roof.setColorAt(i, color);
+      setPart(instances.roof, i, f, 0, 1.83, -0.42);
+      setPart(instances.grille, i, f, 0, 0.46, 3.18);
+      for (let side = 0; side < 2; side++) {
+        setPart(
+          instances.stripes,
+          i * 2 + side,
+          f,
+          side ? 0.42 : -0.42,
+          1.115,
+          1.88,
+        );
+        setPart(
+          instances.wingPosts,
+          i * 2 + side,
+          f,
+          side ? 1.1 : -1.1,
+          1.25,
+          -2.5,
+        );
+      }
+      for (let wheel = 0; wheel < 4; wheel++)
+        setPart(
+          instances.hubs,
+          i * 4 + wheel,
+          f,
+          wheel % 2 ? 1.68 : -1.68,
+          0.05,
+          wheel < 2 ? 1.9 : -1.9,
+          1,
+          1,
+          1,
+          f.progress / 0.65,
+          wheel < 2 ? (p.steering || 0) * 2 : 0,
+          Math.PI / 2,
+        );
       for (let wheel = 0; wheel < 4; wheel++)
         setPart(
           instances.wheels,
@@ -645,7 +765,7 @@ function animate() {
           Math.PI / 2,
         );
       for (let l = 0; l < 2; l++)
-        setPart(instances.lights, i * 2 + l, f, l ? 1 : -1, 0.67, 3.03);
+        setPart(instances.lights, i * 2 + l, f, l ? 1 : -1, 0.67, 3.18);
       for (let rear = 0; rear < 2; rear++)
         setPart(
           instances.rearLights,
@@ -653,7 +773,7 @@ function animate() {
           f,
           rear ? 1 : -1,
           0.67,
-          -3.03,
+          -3.18,
         );
       const boost = p.boosted && g.phase !== "paused";
       setPart(
@@ -694,17 +814,17 @@ function animate() {
     for (const [name, mesh] of Object.entries(instances)) {
       mesh.count =
         active.length *
-        (name === "wheels"
+        (["wheels", "hubs"].includes(name)
           ? 4
-          : ["lights", "rearLights"].includes(name)
+          : ["lights", "rearLights", "stripes", "wingPosts"].includes(name)
             ? 2
             : 1);
       mesh.instanceMatrix.needsUpdate = true;
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     }
     let f = focusRacer ? carFrames.get(focusRacer.id) : frameAt(now / 160000);
-    const behind = g.config.camera === "overview" ? 75 : 28,
-      height = g.config.camera === "overview" ? 55 : 12,
+    const behind = g.config.camera === "overview" ? 75 : 22,
+      height = g.config.camera === "overview" ? 55 : 9,
       target = f.pos
         .clone()
         .addScaledVector(f.tangent, -behind)
@@ -714,10 +834,10 @@ function animate() {
       camera.position.copy(target);
       camera.userData.ready = true;
     }
-    camera.position.lerp(target, 1 - Math.exp(-dt * 3.5));
+    camera.position.lerp(target, 1 - Math.exp(-dt * 7));
     const look = f.pos
       .clone()
-      .addScaledVector(f.tangent, g.config.camera === "overview" ? 30 : 24)
+      .addScaledVector(f.tangent, g.config.camera === "overview" ? 30 : 12)
       .add(new THREE.Vector3(0, 2, 0));
     camera.lookAt(look);
     for (let i = projectiles.length - 1; i >= 0; i--) {
@@ -870,7 +990,7 @@ function uiTimer() {
     $("stateEyebrow").textContent = "THÀNH PHỐ ĐÃ LÊN ĐÈN";
     $("countdown").textContent = "CHỜ XUẤT PHÁT";
     $("stateHint").textContent =
-      "Bình luận bất kỳ để lên xe · Bắt đầu trong bảng điều khiển";
+      "Thả tim hoặc bình luận để lên xe · Bắt đầu trong bảng điều khiển";
   }
   if (focusRacer) {
     $("focusName").textContent = `#${focusRacer.rank} · ${focusRacer.name}`;

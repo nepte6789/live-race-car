@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { advanceTraffic, aheadDistance, LANES } from "./traffic.mjs";
 export const QUESTIONS = JSON.parse(
   fs.readFileSync(new URL("../data/questions.json", import.meta.url), "utf8"),
 );
@@ -87,10 +88,29 @@ export class Race {
     }
     if (this.users.size >= this.config.capacity) return null;
     const pack = [...this.users.values()].filter((p) => !p.finishedAt);
-    const progress =
+    let progress =
       this.phase === "racing" && pack.length
         ? Math.max(0, Math.min(...pack.map((p) => p.progress)) - 30)
         : 0;
+    const spawnLane = LANES[this.users.size % LANES.length];
+    if (this.phase === "racing") {
+      // Join behind the pack, moving back until this physical lane has room.
+      for (let attempt = 0; attempt < 300; attempt++) {
+        const occupied = pack.some(
+          (q) =>
+            Math.min(
+              Math.abs(q.lane - spawnLane),
+              Math.abs(q.targetLane - spawnLane),
+            ) < 3.88 &&
+            Math.min(
+              aheadDistance(progress, q.progress, this.config.trackLength),
+              aheadDistance(q.progress, progress, this.config.trackLength),
+            ) < 9,
+        );
+        if (!occupied) break;
+        progress -= 9;
+      }
+    }
     const n = ++this.serial;
     p = {
       id,
@@ -99,10 +119,17 @@ export class Race {
       demo: !!data.demo,
       joined: n,
       hue: (n * 137.508) % 360,
-      progress,
+      progress:
+        this.phase === "racing"
+          ? progress
+          : -Math.floor(this.users.size / 4) * 9,
       speed: 0,
-      lane: ((n % 5) - 2) * 2.8,
-      targetLane: ((n % 5) - 2) * 2.8,
+      lane: LANES[this.users.size % LANES.length],
+      targetLane: LANES[this.users.size % LANES.length],
+      steering: 0,
+      laneChangeUntil: 0,
+      requestedLane: null,
+      manualUntil: 0,
       xp: 0,
       charge: 0,
       boostUntil: 0,
@@ -146,11 +173,23 @@ export class Race {
     if (this.chat.length > 30) this.chat.shift();
     const input = normalize(text);
     if (["trai", "left"].includes(input)) {
-      p.targetLane = Math.max(-6, p.targetLane - 2);
+      const lane = LANES.reduce(
+        (a, b) =>
+          Math.abs(b - p.targetLane) < Math.abs(a - p.targetLane) ? b : a,
+        LANES[0],
+      );
+      p.requestedLane = LANES[Math.max(0, LANES.indexOf(lane) - 1)];
+      p.manualUntil = this.now() + 3000;
       return { ok: true };
     }
     if (["phai", "right"].includes(input)) {
-      p.targetLane = Math.min(6, p.targetLane + 2);
+      const lane = LANES.reduce(
+        (a, b) =>
+          Math.abs(b - p.targetLane) < Math.abs(a - p.targetLane) ? b : a,
+        LANES[0],
+      );
+      p.requestedLane = LANES[Math.min(3, LANES.indexOf(lane) + 1)];
+      p.manualUntil = this.now() + 3000;
       return { ok: true };
     }
     if (
@@ -304,7 +343,7 @@ export class Race {
     this.emit(
       "welcome",
       { ...data, avatar: avatar(data.avatar) },
-      `Chào ${String(data.name || "bạn").slice(0, 42)}! Bình luận bất kỳ để lên xe nhé.`,
+      `Chào ${String(data.name || "bạn").slice(0, 42)}! Thả tim hoặc bình luận để lên xe nhé.`,
     );
   }
   ranking() {
@@ -339,6 +378,10 @@ export class Race {
         correct: 0,
         likeRemainder: 0,
         followed: false,
+        steering: 0,
+        laneChangeUntil: 0,
+        requestedLane: null,
+        manualUntil: 0,
       });
       grid++;
     }
@@ -367,9 +410,17 @@ export class Race {
     this.combos.clear();
     this.quizIndex++;
     if (!keepPlayers) this.users.clear();
-    for (const p of this.users.values())
+    let grid = 0;
+    for (const p of this.users.values()) {
+      const lane = LANES[grid % 4];
       Object.assign(p, {
-        progress: 0,
+        progress: -Math.floor(grid++ / 4) * 9,
+        lane,
+        targetLane: lane,
+        steering: 0,
+        laneChangeUntil: 0,
+        requestedLane: null,
+        manualUntil: 0,
         speed: 0,
         xp: 0,
         charge: 0,
@@ -379,6 +430,7 @@ export class Race {
         slowUntil: 0,
         spinUntil: 0,
       });
+    }
     this.lastTick = this.now();
   }
   finishQuiz() {
@@ -413,7 +465,14 @@ export class Race {
       if (this.raceStartedAt !== null) this.raceStartedAt += shift;
       if (this.firstFinisherAt !== null) this.firstFinisherAt += shift;
       for (const p of this.users.values()) {
-        for (const k of ["boostUntil", "shieldUntil", "spinUntil", "slowUntil"])
+        for (const k of [
+          "boostUntil",
+          "shieldUntil",
+          "spinUntil",
+          "slowUntil",
+          "laneChangeUntil",
+          "manualUntil",
+        ])
           if (p[k] > this.pausedAt) p[k] += shift;
         if (p.finishedAt) p.finishedAt += shift;
       }
@@ -512,14 +571,20 @@ export class Race {
     }
     if (this.phase !== "racing") return;
     this.tickQuiz();
+    advanceTraffic(
+      this.users.values(),
+      dt,
+      now,
+      this.config.trackLength,
+      (p) => {
+        const tier = Math.min(4, Math.floor(p.xp / 60)),
+          boost = p.boostUntil > now ? 23 : 0,
+          slow = p.spinUntil > now ? 0.12 : p.slowUntil > now ? 0.5 : 1;
+        return (this.config.baseSpeed + tier * 1.4 + boost) * slow;
+      },
+    );
     for (const p of this.users.values()) {
       if (p.finishedAt) continue;
-      const tier = Math.min(4, Math.floor(p.xp / 60)),
-        boost = p.boostUntil > now ? 23 : 0,
-        slow = p.spinUntil > now ? 0.12 : p.slowUntil > now ? 0.5 : 1;
-      p.speed = (this.config.baseSpeed + tier * 1.4 + boost) * slow;
-      p.lane += (p.targetLane - p.lane) * Math.min(1, dt * 3);
-      p.progress += p.speed * dt;
       if (p.progress >= this.config.laps * this.config.trackLength) {
         p.progress = this.config.laps * this.config.trackLength;
         p.finishedAt = now;
