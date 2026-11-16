@@ -391,30 +391,6 @@ h1 em {
   font-size: 57px;
   color: #ffde86;
 }
-#giftToast {
-  position: absolute;
-  left: 200px;
-  right: 35px;
-  top: 1290px;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 16px 24px;
-  border: 1px solid #78ebff;
-  background: linear-gradient(90deg, #105e85e8, #4c1979e8);
-  border-radius: 60px;
-  font-size: 22px;
-  font-weight: 800;
-  box-shadow: 0 0 40px #4bbcff33;
-}
-#giftToast .avatar {
-  width: 48px;
-  height: 48px;
-}
-#giftToast span {
-  line-height: 1.5;
-}
 #effectLabel {
   position: absolute;
   top: 1190px;
@@ -440,16 +416,40 @@ h1 em {
 }
 .join-rule {
   position: absolute;
-  bottom: 57px;
+  top: 319px;
   left: 38px;
   right: 38px;
-  font-size: 13px;
-  color: #b5d3e7;
-  z-index: 3;
+  min-height: 69px;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid #60eee8;
+  border-left: 6px solid #60eee8;
+  border-radius: 8px;
+  background: linear-gradient(100deg, #084849f5, #0b2439f2);
+  box-shadow: 0 4px 25px #27f3d21a;
+  z-index: 4;
 }
-.join-rule span {
-  color: #5ee8e8;
-  margin: 0 8px;
+.join-rule strong {
+  color: #b3fff0;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+.join-rule > span {
+  color: #d5e9f3;
+  font-size: 15px;
+}
+.join-rule b {
+  color: #ffe38d;
+  font-weight: 900;
+}
+.join-rule i {
+  font-style: normal;
+  margin: 0 12px;
+  color: #6cece1;
 }
 footer {
   position: absolute;
@@ -516,7 +516,7 @@ footer button {
   font-weight: 800;
 }
 .quiz {
-  top: 325px;
+  top: 405px;
   padding-top: 16px;
 }
 .quiz-head {
@@ -680,14 +680,6 @@ footer button {
   right: 180px;
   font-size: 25px;
 }
-#giftToast {
-  top: auto;
-  bottom: 290px;
-  left: 300px;
-  right: 30px;
-  font-size: 18px;
-  padding: 12px 18px;
-}
 #speedStreaks {
   position: absolute;
   inset: 600px 0 80px;
@@ -773,11 +765,275 @@ footer button {
 .award-mode #centerState {
   top: 670px;
 }
-.award-mode #giftToast {
-  display: none;
-}
 @media (prefers-reduced-motion: reduce) {
   #speedStreaks {
     animation: none !important;
   }
+}
+
+/* A compact single-line leaderboard leaves room for the cars. */
+.ranking {
+  width: 292px;
+  padding: 12px 9px 6px;
+  border-color: #84c6d166;
+  border-radius: 12px;
+  background: #08182be8;
+  box-shadow: 0 8px 30px #0003;
+}
+.panel-title {
+  font-size: 16px;
+  padding: 0 7px 11px;
+  letter-spacing: 0.3px;
+}
+.ranking ol {
+  margin-top: 5px;
+}
+.ranking li {
+  min-height: 39px;
+  padding: 5px;
+  gap: 6px;
+  border-left: 3px solid transparent;
+  margin: 2px 0;
+}
+.ranking li:nth-child(1) {
+  border-left-color: #ffd05d;
+  background: linear-gradient(90deg, #9c672e55, #41361722);
+}
+.ranking li:nth-child(2) {
+  border-left-color: #b7cfde;
+}
+.ranking li:nth-child(3) {
+  border-left-color: #d5986b;
+}
+.ranking li > small {
+  width: 20px;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.rank-info {
+  flex-direction: row;
+  overflow: hidden;
+}
+.rank-name {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+.rank-meta {
+  font-size: 9px;
+  color: #99d8e4;
+  background: #173448;
+  border: 1px solid #77bbc22c;
+  border-radius: 4px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.ranking li .avatar {
+  width: 27px;
+  height: 27px;
+  border-width: 1px;
+}
+.ranking li > b {
+  min-width: 19px;
+  text-align: right;
+  font-size: 11px;
+  color: #c1deeb;
+}
+.ranking li.finished > b {
+  color: #98f6be;
+  font-size: 15px;
+}
+.award-mode .join-rule {
+  display: none;
+}
+
+/* Floating nameplate and achievement ribbons, tied to real player statistics. */
+.racer-label {
+  max-width: 310px;
+  min-height: 40px;
+  gap: 6px;
+  padding: 4px 6px 4px 4px;
+  border-radius: 22px;
+  border: 1px solid #a4b4ff;
+  background: linear-gradient(135deg, #142445f5, #231443ed);
+  box-shadow:
+    0 3px 12px #0009,
+    inset 0 1px #e5edff55;
+}
+.racer-label .avatar {
+  width: 31px;
+  height: 31px;
+  border-color: #b3f1ff;
+  box-shadow: 0 0 0 2px #4b4788;
+}
+.racer-label .name {
+  max-width: 176px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #f4f4ff;
+  text-shadow: 0 2px 3px #000;
+}
+.racer-label .rank {
+  padding: 2px 5px;
+  border: 0;
+  border-radius: 4px;
+  color: #a8e8ff;
+  font-size: 10px;
+  background: #0c173d;
+}
+.racer-label .badge {
+  left: 50%;
+  bottom: calc(100% + 7px);
+  transform: translateX(-50%);
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.badge .level {
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #c7ff70;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.35px;
+  text-shadow:
+    0 2px 2px #0e1833,
+    0 0 8px #c6fa4366;
+}
+.badge .honor {
+  position: relative;
+  padding: 4px 18px;
+  border-radius: 5px 12px;
+  border: 1px solid #ffb0e6;
+  background: linear-gradient(110deg, #702764, #bd477e, #6a215d);
+  color: #fff2fb;
+  font-size: 14px;
+  font-weight: 900;
+  font-style: italic;
+  line-height: 1.2;
+  box-shadow:
+    0 2px 7px #0008,
+    inset 0 1px #ffe7f866;
+  text-shadow: 0 1px 2px #3b0b39;
+}
+.badge .honor::before,
+.badge .honor::after {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  content: "✦";
+  font-size: 9px;
+  color: #ffde9a;
+}
+.badge .honor::before {
+  left: 5px;
+}
+.badge .honor::after {
+  right: 5px;
+}
+.badge .heart {
+  background: linear-gradient(110deg, #75234d, #b6326e, #6d214f);
+  border-color: #ffa7d3;
+}
+.badge .wealth {
+  background: linear-gradient(110deg, #5c3019, #a76b27, #643a20);
+  border-color: #ffe5a1;
+  color: #fff2b9;
+}
+.badge .quick {
+  background: linear-gradient(110deg, #163b70, #397c99, #1e3c75);
+  border-color: #9ff9ff;
+  color: #e8feff;
+}
+.badge .status {
+  border: 0;
+  padding: 1px 6px;
+  color: #b9faff;
+  background: #111d3caa;
+  font-size: 9px;
+  letter-spacing: 1px;
+  border-radius: 3px;
+}
+.crest {
+  display: inline-flex;
+  width: 39px;
+  height: 41px;
+  margin: -6px -1px -6px 1px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 5px #d8a7f966);
+}
+.crest svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.crest-shield {
+  fill: #643b6e;
+  stroke: #e7bf6c;
+  stroke-width: 1.4;
+}
+.crest-laurel {
+  fill: none;
+  stroke: #ffd66f;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+.crest-icon {
+  fill: #ffe695;
+  stroke: #ffeab8;
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+.crest[data-emblem="wealth"] .crest-shield {
+  fill: #194e76;
+}
+.crest[data-emblem="wealth"] .crest-icon {
+  fill: #9ff5ff;
+  stroke: #fff;
+}
+.crest[data-emblem="heart"] .crest-shield {
+  fill: #681f50;
+}
+.crest[data-emblem="heart"] .crest-icon {
+  fill: #ff80bd;
+}
+.crest[data-emblem="gift"] .crest-shield {
+  fill: #712b64;
+}
+.crest[data-emblem="quick"] .crest-icon {
+  fill: #9cfcff;
+}
+.racer-label.gold {
+  border-color: #ffe39b;
+  background: linear-gradient(135deg, #3d3017f5, #2f2040ed);
+  box-shadow:
+    0 0 14px #ffc44a66,
+    inset 0 1px #fff2c180;
+}
+.racer-label.gold .name {
+  color: #fff5d7;
+}
+.racer-label.gold .crest-shield {
+  fill: #875026;
+  stroke: #fff0ae;
+}
+
+.racer-label::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 4px);
+  bottom: -5px;
+  width: 7px;
+  height: 7px;
+  background: #20213e;
+  border-right: 1px solid #9faef0;
+  border-bottom: 1px solid #9faef0;
+  transform: rotate(45deg);
+}
+.racer-label.gold::after {
+  border-color: #ffe39b;
+  background: #332b22;
 }
