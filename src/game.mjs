@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import { levelOf, modelOf, honorsFor } from "./progression.mjs";
+import { advanceTraffic, aheadDistance, LANES } from "./traffic.mjs";
 export const QUESTIONS = JSON.parse(
   fs.readFileSync(new URL("../data/questions.json", import.meta.url), "utf8"),
 );
@@ -17,12 +19,12 @@ export class Race {
     this.config = {
       laps: 5,
       trackLength: 2400,
-      baseSpeed: 44,
+      baseSpeed: 64,
       quizSeconds: 20,
       revealSeconds: 8,
       capacity: 100,
       autoNext: true,
-      camera: "chase",
+      camera: "auto",
       followGoal: 50,
       followBase: 0,
       shieldCoins: 10,
@@ -43,6 +45,8 @@ export class Race {
     this.quizIndex = 0;
     this.quizPhase = "question";
     this.quizDeadline = null;
+    this.quizStartedAt = null;
+    this.completedQuizzes = 0;
     this.submissions = new Map();
     this.seen = new Set();
     this.combos = new Map();
@@ -87,10 +91,29 @@ export class Race {
     }
     if (this.users.size >= this.config.capacity) return null;
     const pack = [...this.users.values()].filter((p) => !p.finishedAt);
-    const progress =
+    let progress =
       this.phase === "racing" && pack.length
         ? Math.max(0, Math.min(...pack.map((p) => p.progress)) - 30)
         : 0;
+    const spawnLane = LANES[this.users.size % LANES.length];
+    if (this.phase === "racing") {
+      // Join behind the pack, moving back until this physical lane has room.
+      for (let attempt = 0; attempt < 300; attempt++) {
+        const occupied = pack.some(
+          (q) =>
+            Math.min(
+              Math.abs(q.lane - spawnLane),
+              Math.abs(q.targetLane - spawnLane),
+            ) < 3.88 &&
+            Math.min(
+              aheadDistance(progress, q.progress, this.config.trackLength),
+              aheadDistance(q.progress, progress, this.config.trackLength),
+            ) < 9,
+        );
+        if (!occupied) break;
+        progress -= 9;
+      }
+    }
     const n = ++this.serial;
     p = {
       id,
@@ -99,10 +122,17 @@ export class Race {
       demo: !!data.demo,
       joined: n,
       hue: (n * 137.508) % 360,
-      progress,
+      progress:
+        this.phase === "racing"
+          ? progress
+          : -Math.floor(this.users.size / 4) * 9,
       speed: 0,
-      lane: ((n % 5) - 2) * 2.8,
-      targetLane: ((n % 5) - 2) * 2.8,
+      lane: LANES[this.users.size % LANES.length],
+      targetLane: LANES[this.users.size % LANES.length],
+      steering: 0,
+      laneChangeUntil: 0,
+      requestedLane: null,
+      manualUntil: 0,
       xp: 0,
       charge: 0,
       boostUntil: 0,
@@ -113,6 +143,12 @@ export class Race {
       finishedAt: null,
       wins: 0,
       correct: 0,
+      giftCount: 0,
+      giftCoins: 0,
+      maxGiftCoins: 0,
+      responseTotalMs: this.completedQuizzes * this.config.quizSeconds * 1000,
+      timedCorrect: 0,
+      answerElapsedMs: null,
       likes: 0,
       likeRemainder: 0,
       followed: false,
@@ -146,11 +182,23 @@ export class Race {
     if (this.chat.length > 30) this.chat.shift();
     const input = normalize(text);
     if (["trai", "left"].includes(input)) {
-      p.targetLane = Math.max(-6, p.targetLane - 2);
+      const lane = LANES.reduce(
+        (a, b) =>
+          Math.abs(b - p.targetLane) < Math.abs(a - p.targetLane) ? b : a,
+        LANES[0],
+      );
+      p.requestedLane = LANES[Math.max(0, LANES.indexOf(lane) - 1)];
+      p.manualUntil = this.now() + 3000;
       return { ok: true };
     }
     if (["phai", "right"].includes(input)) {
-      p.targetLane = Math.min(6, p.targetLane + 2);
+      const lane = LANES.reduce(
+        (a, b) =>
+          Math.abs(b - p.targetLane) < Math.abs(a - p.targetLane) ? b : a,
+        LANES[0],
+      );
+      p.requestedLane = LANES[Math.min(3, LANES.indexOf(lane) + 1)];
+      p.manualUntil = this.now() + 3000;
       return { ok: true };
     }
     if (
@@ -177,6 +225,7 @@ export class Race {
       q = QUESTIONS[this.quizIndex % QUESTIONS.length],
       correct = option === q.answer;
     this.submissions.set(p.id, option);
+    p.answerElapsedMs = Math.max(0, this.now() - this.quizStartedAt);
     p.lastResult = correct ? "correct" : "wrong";
     if (correct) {
       p.correct++;
@@ -197,7 +246,7 @@ export class Race {
       units = Math.floor(sum / 10);
     p.likeRemainder = sum % 10;
     p.charge = Math.min(100, p.charge + units * 3);
-    p.xp += Math.min(10, units);
+    p.xp += units;
     if (p.charge >= 100 && this.phase === "racing" && !p.finishedAt) {
       p.charge -= 100;
       this.boost(p, 5);
@@ -250,6 +299,9 @@ export class Race {
     if (!delta) return;
     const value = Math.min(1000000, delta * coins);
     p.xp += Math.min(200, value);
+    p.giftCount += delta;
+    p.giftCoins += value;
+    p.maxGiftCoins = Math.max(p.maxGiftCoins, coins);
     p.charge = Math.min(100, p.charge + Math.min(50, value * 2));
     let action = "nitro",
       target = null,
@@ -304,7 +356,7 @@ export class Race {
     this.emit(
       "welcome",
       { ...data, avatar: avatar(data.avatar) },
-      `Chào ${String(data.name || "bạn").slice(0, 42)}! Bình luận bất kỳ để lên xe nhé.`,
+      `Chào ${String(data.name || "bạn").slice(0, 42)}! Thả tim hoặc bình luận để lên xe nhé.`,
     );
   }
   ranking() {
@@ -337,11 +389,20 @@ export class Race {
         lastResult: "",
         finishedAt: null,
         correct: 0,
+        timedCorrect: 0,
+        responseTotalMs: 0,
+        answerElapsedMs: null,
         likeRemainder: 0,
         followed: false,
+        steering: 0,
+        laneChangeUntil: 0,
+        requestedLane: null,
+        manualUntil: 0,
       });
       grid++;
     }
+    this.completedQuizzes = 0;
+    this.quizStartedAt = null;
     this.phase = "countdown";
     this.phaseDeadline = this.now() + 5000;
     this.raceStartedAt = null;
@@ -356,6 +417,8 @@ export class Race {
   reset({ keepPlayers = true } = {}) {
     this.round++;
     this.phase = "lobby";
+    this.completedQuizzes = 0;
+    this.quizStartedAt = null;
     this.phaseDeadline = null;
     this.quizDeadline = null;
     this.raceStartedAt = null;
@@ -367,31 +430,54 @@ export class Race {
     this.combos.clear();
     this.quizIndex++;
     if (!keepPlayers) this.users.clear();
-    for (const p of this.users.values())
+    let grid = 0;
+    for (const p of this.users.values()) {
+      const lane = LANES[grid % 4];
       Object.assign(p, {
-        progress: 0,
+        progress: -Math.floor(grid++ / 4) * 9,
+        lane,
+        targetLane: lane,
+        steering: 0,
+        laneChangeUntil: 0,
+        requestedLane: null,
+        manualUntil: 0,
         speed: 0,
-        xp: 0,
         charge: 0,
+        responseTotalMs: 0,
+        timedCorrect: 0,
+        answerElapsedMs: null,
         finishedAt: null,
         boostUntil: 0,
         shieldUntil: 0,
         slowUntil: 0,
         spinUntil: 0,
       });
+    }
     this.lastTick = this.now();
   }
   finishQuiz() {
     if (this.quizPhase !== "question") return;
+    for (const p of this.users.values()) {
+      const correct = p.lastResult === "correct" && p.answerElapsedMs !== null;
+      p.responseTotalMs += correct
+        ? p.answerElapsedMs
+        : this.config.quizSeconds * 1000;
+      if (correct) p.timedCorrect++;
+    }
+    this.completedQuizzes++;
     this.quizPhase = "reveal";
     this.quizDeadline += this.config.revealSeconds * 1000;
   }
   nextQuiz() {
     this.quizIndex++;
     this.quizPhase = "question";
+    this.quizStartedAt = this.now();
     this.quizDeadline = this.now() + this.config.quizSeconds * 1000;
     this.submissions.clear();
-    for (const p of this.users.values()) p.lastResult = "";
+    for (const p of this.users.values()) {
+      p.lastResult = "";
+      p.answerElapsedMs = null;
+    }
   }
   tickQuiz() {
     if (
@@ -410,10 +496,18 @@ export class Race {
       this.phase = this.pausedPhase;
       if (this.phaseDeadline) this.phaseDeadline += shift;
       if (this.quizDeadline) this.quizDeadline += shift;
+      if (this.quizStartedAt !== null) this.quizStartedAt += shift;
       if (this.raceStartedAt !== null) this.raceStartedAt += shift;
       if (this.firstFinisherAt !== null) this.firstFinisherAt += shift;
       for (const p of this.users.values()) {
-        for (const k of ["boostUntil", "shieldUntil", "spinUntil", "slowUntil"])
+        for (const k of [
+          "boostUntil",
+          "shieldUntil",
+          "spinUntil",
+          "slowUntil",
+          "laneChangeUntil",
+          "manualUntil",
+        ])
           if (p[k] > this.pausedAt) p[k] += shift;
         if (p.finishedAt) p.finishedAt += shift;
       }
@@ -426,7 +520,10 @@ export class Race {
     }
   }
   configure(c) {
-    if (c.camera !== undefined && !["chase", "overview"].includes(c.camera))
+    if (
+      c.camera !== undefined &&
+      !["auto", "chase", "overview"].includes(c.camera)
+    )
       throw Error("Góc máy không hợp lệ");
     for (const [key, min, max] of [
       ["laps", 1, 10],
@@ -496,6 +593,7 @@ export class Race {
       dt = 0;
       this.raceStartedAt = now;
       this.phaseDeadline = null;
+      this.quizStartedAt = now;
       this.quizDeadline = now + this.config.quizSeconds * 1000;
       this.emit("system", null, "XUẤT PHÁT · đường đua đã mở!");
     }
@@ -512,14 +610,22 @@ export class Race {
     }
     if (this.phase !== "racing") return;
     this.tickQuiz();
+    advanceTraffic(
+      this.users.values(),
+      dt,
+      now,
+      this.config.trackLength,
+      (p) => {
+        const tier = levelOf(p.xp) - 1,
+          boost = p.boostUntil > now ? 38 : 0,
+          slow = p.spinUntil > now ? 0.12 : p.slowUntil > now ? 0.5 : 1;
+        return (
+          (this.config.baseSpeed + Math.min(15, tier) * 1.4 + boost) * slow
+        );
+      },
+    );
     for (const p of this.users.values()) {
       if (p.finishedAt) continue;
-      const tier = Math.min(4, Math.floor(p.xp / 60)),
-        boost = p.boostUntil > now ? 23 : 0,
-        slow = p.spinUntil > now ? 0.12 : p.slowUntil > now ? 0.5 : 1;
-      p.speed = (this.config.baseSpeed + tier * 1.4 + boost) * slow;
-      p.lane += (p.targetLane - p.lane) * Math.min(1, dt * 3);
-      p.progress += p.speed * dt;
       if (p.progress >= this.config.laps * this.config.trackLength) {
         p.progress = this.config.laps * this.config.trackLength;
         p.finishedAt = now;
@@ -548,6 +654,7 @@ export class Race {
       revealed =
         this.quizPhase === "reveal" &&
         ["racing", "paused"].includes(this.phase);
+    const honors = honorsFor(this.users.values());
     const ranked = this.ranking().map((p, i) => ({
       ...p,
       rank: i + 1,
@@ -555,7 +662,11 @@ export class Race {
         this.config.laps,
         Math.max(1, Math.floor(p.progress / this.config.trackLength) + 1),
       ),
-      tier: Math.min(4, Math.floor(p.xp / 60)),
+      tier: levelOf(p.xp) - 1,
+      level: levelOf(p.xp),
+      model: modelOf(levelOf(p.xp)),
+      honors: honors.get(p.id),
+      gold: i === 0,
       boosted: p.boostUntil > effective,
       shielded: p.shieldUntil > effective,
       spinning: p.spinUntil > effective,
