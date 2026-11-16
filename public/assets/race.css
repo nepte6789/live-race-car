@@ -438,91 +438,6 @@ h1 em {
   border: 1px solid #79c7e133;
   border-radius: 16px;
 }
-.telemetry {
-  position: absolute;
-  bottom: 240px;
-  left: 38px;
-  width: 355px;
-  z-index: 3;
-}
-.telemetry small {
-  font-size: 11px;
-  color: #9ac6df;
-  display: block;
-  max-width: 330px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.telemetry strong {
-  font-size: 80px;
-  line-height: 1.2;
-  font-weight: 900;
-  display: block;
-  font-style: italic;
-  text-shadow: 0 0 25px #43d8fb44;
-}
-.telemetry strong span {
-  font-size: 15px;
-  color: #77adc4;
-  margin-left: 8px;
-  font-style: normal;
-}
-.nitro {
-  margin-top: 12px;
-}
-.nitro small {
-  display: flex;
-  justify-content: space-between;
-  letter-spacing: 2px;
-}
-.nitro i {
-  height: 8px;
-  display: block;
-  margin: 9px 0 5px;
-  background: #25334f;
-  transform: skew(-20deg);
-}
-.nitro s {
-  display: block;
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, #09cbea, #ae6fff);
-  box-shadow: 0 0 15px #4bd9ff;
-}
-.nitro > span {
-  font-size: 11px;
-  color: #809fbe;
-}
-.chat {
-  position: absolute;
-  bottom: 90px;
-  left: 38px;
-  right: 340px;
-  height: 128px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 8px;
-  z-index: 3;
-}
-.chat-row {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  font-size: 14px;
-}
-.chat-row b {
-  font-size: 11px;
-  color: #8fb1d3;
-  margin-right: 8px;
-}
-.chat-row .text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .join-rule {
   position: absolute;
   bottom: 57px;
@@ -576,5 +491,293 @@ footer button {
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
+  }
+}
+
+/* Broadcast HUD: larger news, clean racing area and readable results. */
+.ticker {
+  min-height: 72px;
+  font-size: 23px;
+  border: 2px solid #ffdb68;
+  background: #302108ed;
+  box-shadow: 0 0 24px #ffc74122;
+}
+.ticker b {
+  background: linear-gradient(135deg, #ffdb65, #f5a726);
+  color: #211505;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.1;
+  padding: 13px 18px;
+  font-style: italic;
+}
+.ticker span {
+  color: #ffdf79;
+  font-weight: 800;
+}
+.quiz {
+  top: 325px;
+  padding-top: 16px;
+}
+.quiz-head {
+  font-size: 15px;
+}
+.answer {
+  transition:
+    opacity 0.3s,
+    background 0.3s,
+    border-color 0.3s;
+}
+.answer.correct {
+  color: #f2fff6;
+  font-weight: 900;
+  background: #126c44;
+  border: 2px solid #9cffa9;
+  box-shadow: 0 0 24px #6bff9a55;
+}
+.answer.correct > b {
+  color: #fff17f;
+  font-weight: 900;
+}
+.answer.dimmed {
+  opacity: 0.28;
+  filter: saturate(0.25);
+}
+.quiz-timer {
+  margin-top: 15px;
+  height: 9px;
+  border-radius: 10px;
+  background: #32425b;
+  overflow: hidden;
+}
+.quiz-timer i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #25e0d0, #b6ff75);
+  transform-origin: left;
+  box-shadow: 0 0 15px #8bffe2;
+}
+.quiz-timer.urgent i {
+  background: #ff756d;
+}
+.quiz-timer.reveal i {
+  background: #ffd96e;
+}
+.ranking {
+  top: 690px;
+  width: 278px;
+  padding: 12px 10px 8px;
+  border-color: #ffdd7255;
+  background: linear-gradient(120deg, #08152ded, #101830d9);
+}
+.panel-title {
+  color: #ffe69b;
+  font-size: 16px;
+}
+.ranking ol {
+  margin-bottom: 0;
+}
+.ranking li {
+  padding: 8px 5px;
+  border-radius: 5px;
+  gap: 6px;
+  border-bottom: 1px solid #9ac2e014;
+}
+.ranking li:nth-child(1) {
+  background: linear-gradient(90deg, #a66a2655, transparent);
+}
+.ranking li:nth-child(2) {
+  background: linear-gradient(90deg, #8caac833, transparent);
+}
+.ranking li:nth-child(3) {
+  background: linear-gradient(90deg, #b779452b, transparent);
+}
+.ranking li > small {
+  color: #a7c7df;
+  font-weight: 900;
+}
+.ranking li:first-child > small {
+  color: #ffdf78;
+}
+.rank-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  gap: 3px;
+}
+.rank-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+.rank-meta {
+  font-size: 9px;
+  color: #88adc7;
+}
+.ranking li .avatar {
+  width: 28px;
+  height: 28px;
+}
+.ranking li b {
+  color: #c4e8ef;
+  font-size: 11px;
+}
+.racer-label {
+  max-width: 280px;
+}
+.racer-label.gold {
+  border-color: #ffe07e;
+  box-shadow: 0 0 16px #ffbb3c66;
+}
+.racer-label .badge {
+  left: 0;
+  bottom: calc(100% + 3px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+.badge > span {
+  border: 1px solid #ffe49577;
+  background: #211333e8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #ffe591;
+  font-size: 12px;
+}
+.badge .level {
+  color: #96ffdc;
+  border-color: #7ffff244;
+  font-size: 10px;
+}
+#cameraCaption {
+  max-width: 650px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: absolute;
+  right: 32px;
+  top: 670px;
+  z-index: 3;
+  padding: 9px 15px;
+  border: 1px solid #69eaf477;
+  border-radius: 20px;
+  background: #091a32dd;
+  color: #abf8ff;
+  font-size: 12px;
+  font-weight: 800;
+}
+#minimap {
+  bottom: 105px;
+  width: 235px;
+  height: 175px;
+}
+#effectLabel {
+  top: auto;
+  bottom: 320px;
+  left: 300px;
+  right: 180px;
+  font-size: 25px;
+}
+#giftToast {
+  top: auto;
+  bottom: 290px;
+  left: 300px;
+  right: 30px;
+  font-size: 18px;
+  padding: 12px 18px;
+}
+#speedStreaks {
+  position: absolute;
+  inset: 600px 0 80px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  background: repeating-conic-gradient(
+    from 15deg at 50% 35%,
+    transparent 0deg 19deg,
+    #8fffff30 19.2deg 19.6deg,
+    transparent 19.8deg 35deg
+  );
+  mask-image: radial-gradient(ellipse, transparent 25%, #000 100%);
+}
+.nitro-active #speedStreaks {
+  opacity: 0.65;
+  animation: rush 0.35s linear infinite;
+}
+@keyframes rush {
+  from {
+    transform: scale(0.96);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+#podium {
+  position: absolute;
+  bottom: 270px;
+  left: 70px;
+  right: 70px;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  align-items: end;
+}
+.award-card {
+  text-align: center;
+  padding: 17px 10px;
+  border-radius: 14px;
+  border: 1px solid #bdccdf;
+  background: #111e38ed;
+  overflow: hidden;
+}
+.award-card.first {
+  border: 2px solid #ffdf7c;
+  background: linear-gradient(#604517ed, #1c172ced);
+  transform: translateY(-25px);
+}
+.award-card .avatar {
+  width: 62px;
+  height: 62px;
+  margin: 8px auto;
+}
+.award-card strong,
+.award-card small {
+  display: block;
+}
+.award-card strong {
+  font-size: 19px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.award-card small {
+  font-size: 12px;
+  color: #b5c6de;
+  margin-top: 8px;
+}
+.award-medal {
+  font-size: 29px;
+  font-weight: 900;
+  color: #ffe395;
+}
+.award-mode .quiz,
+.award-mode .ranking,
+.award-mode #cameraCaption,
+.award-mode #minimap,
+.award-mode #effectLabel {
+  display: none;
+}
+.award-mode #centerState {
+  top: 670px;
+}
+.award-mode #giftToast {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  #speedStreaks {
+    animation: none !important;
   }
 }

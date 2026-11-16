@@ -81,7 +81,7 @@ function render(m) {
       p.name,
       `V${p.lap}/${g.config.laps}`,
       Math.round(p.speed * 3.6) + " km/h",
-      p.xp + " XP",
+      `${p.xp} XP · Cấp ${p.level}`,
       p.finishedAt
         ? "Đã về đích"
         : p.spinning

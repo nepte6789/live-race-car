@@ -31,7 +31,7 @@
         </div>
       </header>
       <div class="ticker">
-        <b>ĐƯỜNG ĐUA</b
+        <b>BREAKING<br />NEWS</b
         ><span id="ticker"
           >Thả tim hoặc bình luận để lên xe · Trả lời A, B, C hoặc D để tăng
           tốc</span
@@ -43,6 +43,16 @@
         </div>
         <h2 id="prompt">Thả tim hoặc bình luận để lên xe. Sẵn sàng bứt tốc?</h2>
         <div id="answers"></div>
+        <div
+          class="quiz-timer"
+          role="progressbar"
+          aria-label="Thời gian trả lời"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="100"
+        >
+          <i id="quizProgress"></i>
+        </div>
         <div class="quiz-foot">
           <span id="quizRule"
             >Đúng → NITRO 5 giây · Chỉ tính đáp án đầu tiên</span
@@ -51,7 +61,7 @@
         <p id="explanation" hidden></p>
       </section>
       <aside class="ranking">
-        <div class="panel-title">🏁 TOP TAY ĐUA</div>
+        <div class="panel-title">🏁 TOP 10 TAY ĐUA</div>
         <ol id="ranking"></ol>
       </aside>
       <div id="centerState">
@@ -62,17 +72,9 @@
       <div id="giftToast" hidden></div>
       <div id="effectLabel" hidden></div>
       <canvas id="minimap" width="420" height="310"></canvas>
-      <section class="telemetry">
-        <div>
-          <small id="focusName">ĐANG THEO XE DẪN ĐẦU</small
-          ><strong id="speed">000<span>KM/H</span></strong>
-        </div>
-        <div class="nitro">
-          <small>NITRO <b id="charge">0%</b></small
-          ><i><s id="chargeBar"></s></i><span>Bình luận NITRO khi đủ 30%</span>
-        </div>
-      </section>
-      <div class="chat" id="chat"></div>
+      <div id="cameraCaption">GÓC MÁY TỰ ĐỘNG</div>
+      <div id="speedStreaks" aria-hidden="true"></div>
+      <section id="podium" hidden aria-label="Bục trao giải"></section>
       <div class="join-rule">
         💬 Thả tim hoặc bình luận để lên xe <span>·</span> A / B / C / D để tăng
         tốc <span>·</span> Trái / phải để đổi làn

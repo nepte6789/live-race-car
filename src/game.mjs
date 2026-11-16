@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { levelOf, modelOf, honorsFor } from "./progression.mjs";
 import { advanceTraffic, aheadDistance, LANES } from "./traffic.mjs";
 export const QUESTIONS = JSON.parse(
   fs.readFileSync(new URL("../data/questions.json", import.meta.url), "utf8"),
@@ -18,12 +19,12 @@ export class Race {
     this.config = {
       laps: 5,
       trackLength: 2400,
-      baseSpeed: 44,
+      baseSpeed: 64,
       quizSeconds: 20,
       revealSeconds: 8,
       capacity: 100,
       autoNext: true,
-      camera: "chase",
+      camera: "auto",
       followGoal: 50,
       followBase: 0,
       shieldCoins: 10,
@@ -44,6 +45,8 @@ export class Race {
     this.quizIndex = 0;
     this.quizPhase = "question";
     this.quizDeadline = null;
+    this.quizStartedAt = null;
+    this.completedQuizzes = 0;
     this.submissions = new Map();
     this.seen = new Set();
     this.combos = new Map();
@@ -140,6 +143,12 @@ export class Race {
       finishedAt: null,
       wins: 0,
       correct: 0,
+      giftCount: 0,
+      giftCoins: 0,
+      maxGiftCoins: 0,
+      responseTotalMs: this.completedQuizzes * this.config.quizSeconds * 1000,
+      timedCorrect: 0,
+      answerElapsedMs: null,
       likes: 0,
       likeRemainder: 0,
       followed: false,
@@ -216,6 +225,7 @@ export class Race {
       q = QUESTIONS[this.quizIndex % QUESTIONS.length],
       correct = option === q.answer;
     this.submissions.set(p.id, option);
+    p.answerElapsedMs = Math.max(0, this.now() - this.quizStartedAt);
     p.lastResult = correct ? "correct" : "wrong";
     if (correct) {
       p.correct++;
@@ -236,7 +246,7 @@ export class Race {
       units = Math.floor(sum / 10);
     p.likeRemainder = sum % 10;
     p.charge = Math.min(100, p.charge + units * 3);
-    p.xp += Math.min(10, units);
+    p.xp += units;
     if (p.charge >= 100 && this.phase === "racing" && !p.finishedAt) {
       p.charge -= 100;
       this.boost(p, 5);
@@ -289,6 +299,9 @@ export class Race {
     if (!delta) return;
     const value = Math.min(1000000, delta * coins);
     p.xp += Math.min(200, value);
+    p.giftCount += delta;
+    p.giftCoins += value;
+    p.maxGiftCoins = Math.max(p.maxGiftCoins, coins);
     p.charge = Math.min(100, p.charge + Math.min(50, value * 2));
     let action = "nitro",
       target = null,
@@ -376,6 +389,9 @@ export class Race {
         lastResult: "",
         finishedAt: null,
         correct: 0,
+        timedCorrect: 0,
+        responseTotalMs: 0,
+        answerElapsedMs: null,
         likeRemainder: 0,
         followed: false,
         steering: 0,
@@ -385,6 +401,8 @@ export class Race {
       });
       grid++;
     }
+    this.completedQuizzes = 0;
+    this.quizStartedAt = null;
     this.phase = "countdown";
     this.phaseDeadline = this.now() + 5000;
     this.raceStartedAt = null;
@@ -399,6 +417,8 @@ export class Race {
   reset({ keepPlayers = true } = {}) {
     this.round++;
     this.phase = "lobby";
+    this.completedQuizzes = 0;
+    this.quizStartedAt = null;
     this.phaseDeadline = null;
     this.quizDeadline = null;
     this.raceStartedAt = null;
@@ -422,8 +442,10 @@ export class Race {
         requestedLane: null,
         manualUntil: 0,
         speed: 0,
-        xp: 0,
         charge: 0,
+        responseTotalMs: 0,
+        timedCorrect: 0,
+        answerElapsedMs: null,
         finishedAt: null,
         boostUntil: 0,
         shieldUntil: 0,
@@ -435,15 +457,27 @@ export class Race {
   }
   finishQuiz() {
     if (this.quizPhase !== "question") return;
+    for (const p of this.users.values()) {
+      const correct = p.lastResult === "correct" && p.answerElapsedMs !== null;
+      p.responseTotalMs += correct
+        ? p.answerElapsedMs
+        : this.config.quizSeconds * 1000;
+      if (correct) p.timedCorrect++;
+    }
+    this.completedQuizzes++;
     this.quizPhase = "reveal";
     this.quizDeadline += this.config.revealSeconds * 1000;
   }
   nextQuiz() {
     this.quizIndex++;
     this.quizPhase = "question";
+    this.quizStartedAt = this.now();
     this.quizDeadline = this.now() + this.config.quizSeconds * 1000;
     this.submissions.clear();
-    for (const p of this.users.values()) p.lastResult = "";
+    for (const p of this.users.values()) {
+      p.lastResult = "";
+      p.answerElapsedMs = null;
+    }
   }
   tickQuiz() {
     if (
@@ -462,6 +496,7 @@ export class Race {
       this.phase = this.pausedPhase;
       if (this.phaseDeadline) this.phaseDeadline += shift;
       if (this.quizDeadline) this.quizDeadline += shift;
+      if (this.quizStartedAt !== null) this.quizStartedAt += shift;
       if (this.raceStartedAt !== null) this.raceStartedAt += shift;
       if (this.firstFinisherAt !== null) this.firstFinisherAt += shift;
       for (const p of this.users.values()) {
@@ -485,7 +520,10 @@ export class Race {
     }
   }
   configure(c) {
-    if (c.camera !== undefined && !["chase", "overview"].includes(c.camera))
+    if (
+      c.camera !== undefined &&
+      !["auto", "chase", "overview"].includes(c.camera)
+    )
       throw Error("Góc máy không hợp lệ");
     for (const [key, min, max] of [
       ["laps", 1, 10],
@@ -555,6 +593,7 @@ export class Race {
       dt = 0;
       this.raceStartedAt = now;
       this.phaseDeadline = null;
+      this.quizStartedAt = now;
       this.quizDeadline = now + this.config.quizSeconds * 1000;
       this.emit("system", null, "XUẤT PHÁT · đường đua đã mở!");
     }
@@ -577,10 +616,12 @@ export class Race {
       now,
       this.config.trackLength,
       (p) => {
-        const tier = Math.min(4, Math.floor(p.xp / 60)),
-          boost = p.boostUntil > now ? 23 : 0,
+        const tier = levelOf(p.xp) - 1,
+          boost = p.boostUntil > now ? 38 : 0,
           slow = p.spinUntil > now ? 0.12 : p.slowUntil > now ? 0.5 : 1;
-        return (this.config.baseSpeed + tier * 1.4 + boost) * slow;
+        return (
+          (this.config.baseSpeed + Math.min(15, tier) * 1.4 + boost) * slow
+        );
       },
     );
     for (const p of this.users.values()) {
@@ -613,6 +654,7 @@ export class Race {
       revealed =
         this.quizPhase === "reveal" &&
         ["racing", "paused"].includes(this.phase);
+    const honors = honorsFor(this.users.values());
     const ranked = this.ranking().map((p, i) => ({
       ...p,
       rank: i + 1,
@@ -620,7 +662,11 @@ export class Race {
         this.config.laps,
         Math.max(1, Math.floor(p.progress / this.config.trackLength) + 1),
       ),
-      tier: Math.min(4, Math.floor(p.xp / 60)),
+      tier: levelOf(p.xp) - 1,
+      level: levelOf(p.xp),
+      model: modelOf(levelOf(p.xp)),
+      honors: honors.get(p.id),
+      gold: i === 0,
       boosted: p.boostUntil > effective,
       shielded: p.shieldUntil > effective,
       spinning: p.spinUntil > effective,
