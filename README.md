@@ -21,7 +21,7 @@ npm start
 
 Vào đúng thư mục có package.json, không chạy npm ở thư mục cha. Điều khiển: http://localhost:3000/ ; màn hình đua: http://localhost:3000/overlay.html . OBS Browser Source 1080 × 1920, bật âm thanh trình duyệt. Nếu Call Country/Vua Sinh Tồn đang chạy cổng 3000, dừng ứng dụng đó hoặc tạo `.env` với `PORT=3001` rồi mở localhost:3001.
 
-Bật 12 người thử rồi bấm **Xuất phát** để thử ngay. Đếm 5 giây trước khi xe chạy. Bấm **Bật âm thanh** trên overlay nếu muốn nhạc tự tạo và đọc câu hỏi; giọng Việt cần được cài trên máy. Có thông báo rõ nếu WebGL chưa bật; khi đó điều khiển/luật vẫn chạy nhưng không có hình 3D.
+Bật 12 người thử rồi bấm **Xuất phát** để thử ngay. Đếm 5 giây trước khi xe chạy. Bấm **Bật âm thanh** trên overlay nếu muốn nhạc tự tạo và đọc câu hỏi; mặc định ưu tiên giọng nữ tiếng Việt Hoài My, An, rồi Google tiếng Việt, tốc độ 1.04 và cao độ tự nhiên. Nếu chỉ có giọng nam, ứng dụng báo thiếu giọng nữ và chờ giọng nữ được nạp. Với Windows có thể thêm tiếng Việt và tính năng Speech trong Settings → Time & language → Language & region, rồi khởi động lại trình duyệt/OBS; Chrome/Edge có thể cung cấp thêm giọng tùy máy. Có thông báo rõ nếu WebGL chưa bật; khi đó điều khiển/luật vẫn chạy nhưng không có hình 3D.
 
 ## TikTok LIVE
 
@@ -67,7 +67,7 @@ SPORT/GT dùng thân xe cong có vòm bánh, kính cong, nóc và viền kính, 
 
 Three.js dựng đường đua khép kín trên cao, nhà cửa, cửa sổ, xe và khiên từ hình học thủ tục; không cần API bản đồ hay tải asset ngoài trong lúc LIVE. Xe và tòa nhà dùng instancing để giảm draw call. Hiệu ứng và vật lý là arcade, không phải mô phỏng giao thông thực. Không có cược, tiền thưởng hoặc đổi điểm ra tiền.
 
-Font Be Vietnam Pro: SIL OFL, giấy phép kèm trong public/assets/fonts/OFL.txt. Three.js: MIT, giấy phép trong gói npm. Nhạc Web Audio tự tạo, không lấy âm thanh từ video mẫu. Cần máy có WebGL; độ mượt thực tế tùy GPU và phần mềm quay LIVE. Khung dựng nội bộ 720 × 1280 rồi co theo overlay 1080 × 1920.
+Font Be Vietnam Pro: SIL OFL, giấy phép kèm trong public/assets/fonts/OFL.txt. Three.js: MIT, giấy phép trong gói npm. Nhạc Web Audio tự tạo “Neon Sprint”, EDM vui tươi 128 BPM với kick bốn phách, bass offbeat, clap, hi-hat và giai điệu sáng; có đoạn tăng năng lượng và chuyển nhịp. Âm lượng nền mặc định 10%, tự hạ còn 16% mức đó khi đang đọc; compressor kiểm soát đỉnh âm. Không dùng bản thu hoặc sample từ video mẫu. Cần máy có WebGL; độ mượt thực tế tùy GPU và phần mềm quay LIVE. Khung dựng nội bộ 720 × 1280 rồi co theo overlay 1080 × 1920.
 
 ## Kiểm tra
 
@@ -77,4 +77,4 @@ npm test
 
 Luật được kiểm tra bằng Node; giao diện được kiểm tra trong Chromium. Việc chạy mô phỏng không thay thế kiểm tra một kênh TikTok đang LIVE. Server chỉ lắng nghe 127.0.0.1, kiểm tra Host/Origin, overlay nhận trạng thái nhưng không có quyền gửi lệnh điều khiển. Không phục vụ `.env` ra HTTP.
 
-Bản kiểm tra hiện tại: 28 kiểm thử luật/hình học đạt, gồm cấp xe, danh hiệu, thời gian trả lời có tạm dừng, góc máy và 100 xe giữ khoảng cách. Chromium kiểm tra các dáng SPORT/GT/F1, công bố đáp án và bục trao giải; đã kiểm tra khiên/tên lửa, pause/resume, chuyển góc máy, xóa mô phỏng, overlay không điều khiển được server và `.env` không được phục vụ. Đã thử cả trường hợp không có WebGL để hiện hướng dẫn thay vì trang trống. Chưa xác nhận kết nối với một phiên TikTok LIVE thật.
+Bản kiểm tra hiện tại: 32 kiểm thử luật/hình học/giọng đọc đạt, gồm cấp xe, danh hiệu, thời gian trả lời có tạm dừng, góc máy và 100 xe giữ khoảng cách. Chromium kiểm tra các dáng SPORT/GT/F1, công bố đáp án và bục trao giải; đã kiểm tra khiên/tên lửa, pause/resume, chuyển góc máy, xóa mô phỏng, overlay không điều khiển được server và `.env` không được phục vụ. Đã thử cả trường hợp không có WebGL để hiện hướng dẫn thay vì trang trống. Chưa xác nhận kết nối với một phiên TikTok LIVE thật.

@@ -81,11 +81,28 @@ window.RewardVoice = class {
       return;
     }
     const voices = this.synth
-        .getVoices()
-        .filter((v) => /^vi([-_]|$)/i.test(v.lang)),
-      voice = voices.find((v) => /hoai|linh|female/i.test(v.name)) || voices[0];
+      .getVoices()
+      .filter((v) => /^vi([-_]|$)/i.test(v.lang));
+    const normalized = (v) =>
+      v.name
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    const score = (v) => {
+      const name = normalized(v),
+        compact = name.replace(/[^a-z]/g, "");
+      if (compact.includes("namminh") || /\bmale\b/.test(name)) return -1;
+      if (compact.includes("hoaimy")) return 100;
+      if (/\bmicrosoft\s+an\b/.test(name)) return 90;
+      if (/\bfemale\b/.test(name)) return 80;
+      if (name.includes("google")) return 70;
+      return -1;
+    };
+    const voice = voices
+      .filter((v) => score(v) >= 0)
+      .sort((a, b) => score(b) - score(a))[0];
     if (!voice) {
-      this.onWarning("Máy chưa cài giọng tiếng Việt");
+      this.onWarning("Thiếu giọng nữ VI · Cài An/Hoài My");
       return;
     }
     const message = this.items.shift(),
