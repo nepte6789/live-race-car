@@ -194,3 +194,29 @@ test("bot gift speech has a shared sixty-second cooldown across all bots", () =>
   f.voice.enqueue("Quà bot 3", 1, { demo: true, kind: "gift" });
   assert.equal(f.said.length, 2);
 });
+
+test("welcome speech keeps only the three latest waiting viewers", () => {
+  const f = setup([v("Microsoft An")]);
+  f.voice.enqueue("Câu hỏi", 2);
+  for (let i = 0; i < 5; i++)
+    f.voice.enqueue("Chào " + i, 0.5, {
+      kind: "welcome",
+      expiresAt: Date.now() + 10000,
+    });
+  assert.equal(f.voice.items.filter((x) => x.kind === "welcome").length, 3);
+  f.said[0].onend();
+  assert.equal(f.said[1].text, "Chào 4");
+  f.said[1].onend();
+  assert.equal(f.said[2].text, "Chào 3");
+  f.said[2].onend();
+  assert.equal(f.said[3].text, "Chào 2");
+});
+test("welcomes held through a result window expire instead of greeting old arrivals", () => {
+  let now = 1000;
+  const f = setup([v("Microsoft An")], { now: () => now });
+  f.voice.setQuiet(true);
+  f.voice.enqueue("Chào người cũ", 0.5, { kind: "welcome", expiresAt: 11000 });
+  now = 11001;
+  f.voice.setQuiet(false);
+  assert.equal(f.said.length, 0);
+});

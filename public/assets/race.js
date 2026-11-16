@@ -1,9 +1,9 @@
 import * as THREE from "/vendor/three.module.js";
 import { TRACK_POINTS } from "./track.js";
 import { quietForResults } from "./speech-policy.js";
-import { interactionSpeech } from "./reward-text.js";
+import { answerSpeech, interactionSpeech } from "./reward-text.js";
 import { buildCarGeometry } from "./car-model.js";
-import { selectShot } from "./camera-director.js";
+import { ceremonyView, selectShot } from "./camera-director.js";
 const $ = (id) => document.getElementById(id),
   stage = $("stage");
 function fit() {
@@ -270,7 +270,7 @@ function buildCity() {
 }
 const MAX = 100,
   instances = {};
-let shadows, carGroup, awardScene, awardCamera, confetti;
+let shadows, carGroup, awardScene, awardCamera, confetti, celebration;
 if (webgl) {
   buildCity();
   carGroup = new THREE.Group();
@@ -352,6 +352,43 @@ if (webgl) {
     confetti.setColorAt(i, new THREE.Color().setHSL(rand(), 0.85, 0.65));
   }
   awardScene.add(confetti);
+  const sparkCanvas = document.createElement("canvas");
+  sparkCanvas.width = sparkCanvas.height = 32;
+  const sparkContext = sparkCanvas.getContext("2d"),
+    sparkGradient = sparkContext.createRadialGradient(16, 16, 0, 16, 16, 16);
+  sparkGradient.addColorStop(0, "#fff");
+  sparkGradient.addColorStop(0.25, "#ffffffcc");
+  sparkGradient.addColorStop(1, "#ffffff00");
+  sparkContext.fillStyle = sparkGradient;
+  sparkContext.fillRect(0, 0, 32, 32);
+  const sparkGeometry = new THREE.BufferGeometry(),
+    sparkPositions = new Float32Array(192 * 3),
+    sparkColors = new Float32Array(192 * 3);
+  for (let i = 0; i < 192; i++) {
+    const color = new THREE.Color().setHSL((i % 3) * 0.25 + 0.08, 0.85, 0.7);
+    color.toArray(sparkColors, i * 3);
+  }
+  sparkGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(sparkPositions, 3),
+  );
+  sparkGeometry.setAttribute(
+    "color",
+    new THREE.BufferAttribute(sparkColors, 3),
+  );
+  celebration = new THREE.Points(
+    sparkGeometry,
+    new THREE.PointsMaterial({
+      size: 1.2,
+      map: new THREE.CanvasTexture(sparkCanvas),
+      transparent: true,
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    }),
+  );
+  celebration.frustumCulled = false;
+
   const envFaces = Array.from({ length: 6 }, (_, i) => {
     const canvas = document.createElement("canvas");
     canvas.width = 128;
@@ -758,6 +795,7 @@ function showEvent(e) {
       ["comment", "like", "gift", "winner", "welcome"].includes(e.type)
     ) {
       const question = state.game.quiz;
+      if (e.type === "welcome" && Date.now() + offset - e.at > 5000) return;
       if (
         e.type === "comment" &&
         e.answer &&
@@ -772,7 +810,9 @@ function showEvent(e) {
             ? 1.5
             : e.type === "like"
               ? 0
-              : 1,
+              : e.type === "welcome"
+                ? 0.5
+                : 1,
         {
           key: ["like", "comment"].includes(e.type)
             ? `thanks:${e.type}:${e.userId}`
@@ -781,11 +821,13 @@ function showEvent(e) {
           demo: !!e.demo,
           kind: e.type,
           expiresAt:
-            e.type === "comment"
-              ? e.answer
-                ? question.deadline - offset
-                : Date.now() + 30000
-              : null,
+            e.type === "welcome"
+              ? e.at - offset + 10000
+              : e.type === "comment"
+                ? e.answer
+                  ? question.deadline - offset
+                  : Date.now() + 30000
+                : null,
         },
       );
     }
@@ -803,7 +845,7 @@ function render(m) {
   stage.classList.toggle("awaiting-awards", !!g.awaitingAwards);
   $("quizHeading").textContent = g.awaitingAwards
     ? "🏁 CHỜ TRAO GIẢI"
-    : "✦ CÂU HỎI TĂNG TỐC";
+    : `✦ CÂU HỎI TĂNG TỐC${g.quiz ? " · " + ({ easy: "DỄ", medium: "TRUNG BÌNH", hard: "KHÓ" }[g.quiz.difficulty] || "") : ""}`;
   if (g.round !== round) {
     round = g.round;
     positions.clear();
@@ -909,7 +951,7 @@ function render(m) {
         voice.enqueue(
           q.phase === "question"
             ? `Câu hỏi. ${q.prompt} Bình luận A, B, C hoặc D để trả lời.`
-            : `Đáp án ${"ABCD"[q.answer]}, ${q.options[q.answer]}. ${q.explanation}`,
+            : answerSpeech(q),
           2,
           { key, expiresAt: q.deadline - offset, interrupt: true },
         );
@@ -931,10 +973,11 @@ function render(m) {
   $("cameraCaption").style.top = sidebarTop - 20 + "px";
 }
 function carTransform(p, now, dt) {
-  if (
-    state.game.phase === "finished" ||
-    (state.game.phase === "paused" && state.game.pausedPhase === "finished")
-  ) {
+  const ceremony = ceremonyView(
+    state.game,
+    state.game.phase === "paused" ? state.game.effectiveTime : now + offset,
+  );
+  if (ceremony.active && !ceremony.panorama) {
     const x = p.rank === 1 ? 0 : p.rank === 2 ? -9 : 9,
       h = p.rank === 1 ? 3.6 : p.rank === 2 ? 2 : 1.4;
     return {
@@ -1028,7 +1071,10 @@ function animate() {
   const awardMode =
     g.phase === "finished" ||
     (g.phase === "paused" && g.pausedPhase === "finished");
-  const viewCamera = awardMode ? awardCamera : camera;
+  const ceremony = ceremonyView(g, effectiveNow),
+    waitingPanorama = ceremony.panorama;
+  stage.classList.toggle("panorama-wait", waitingPanorama);
+  const viewCamera = awardMode && !waitingPanorama ? awardCamera : camera;
   $("cameraCaption").textContent =
     shot.label + (focusRacer ? " · " + focusRacer.name : "");
   stage.classList.toggle(
@@ -1036,7 +1082,7 @@ function animate() {
     !!focusRacer?.boosted && g.phase === "racing",
   );
   if (webgl) {
-    const destination = awardMode ? awardScene : scene;
+    const destination = awardMode && !waitingPanorama ? awardScene : scene;
     if (carGroup.parent !== destination) destination.add(carGroup);
     let i = 0;
     for (const p of active) {
@@ -1055,7 +1101,17 @@ function animate() {
       );
       const close =
         p.id !== focusRacer?.id && camera.position.distanceTo(f.pos) < 10;
-      dummy.scale.setScalar((awardMode ? p.rank > 3 : close) ? 0 : 1);
+      dummy.scale.setScalar(
+        (
+          awardMode && !waitingPanorama
+            ? p.rank > 3
+            : waitingPanorama
+              ? false
+              : close
+        )
+          ? 0
+          : 1,
+      );
       dummy.updateMatrix();
       rootMatrix.copy(dummy.matrix);
       const formula = p.model === "formula",
@@ -1343,44 +1399,91 @@ function animate() {
       mesh.instanceMatrix.needsUpdate = true;
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     }
-    let f = focusRacer ? carFrames.get(focusRacer.id) : frameAt(now / 160000);
-    const kind = shot.kind;
-    const behind =
-      kind === "overview"
-        ? 65
-        : kind === "front"
-          ? -23
-          : kind === "side"
-            ? 7
-            : 19;
-    const height = kind === "overview" ? 48 : kind === "side" ? 6 : 7.5;
-    const target = f.pos
-      .clone()
-      .addScaledVector(f.tangent, -behind)
-      .addScaledVector(
-        f.right,
-        kind === "side" ? 18 : kind === "overview" ? 14 : 3,
-      )
-      .add(new THREE.Vector3(0, height, 0));
-    if (!camera.userData.ready) {
-      camera.position.copy(target);
-      camera.userData.ready = true;
-    }
-    // Cut quickly between distant packs; smoothly follow within a shot.
-    if (camera.userData.shot !== shot.id + kind) {
-      camera.position.copy(target);
-      camera.userData.shot = shot.id + kind;
-    }
-    camera.position.lerp(target, 1 - Math.exp(-dt * 9));
-    camera.lookAt(
-      f.pos
+    scene.fog.density = waitingPanorama ? 0.00065 : 0.0036;
+    camera.far = waitingPanorama ? 2500 : 1500;
+    if (waitingPanorama) {
+      const angle = (ceremony.elapsed - 8) * 0.035;
+      const destination = new THREE.Vector3(
+        Math.sin(angle) * 850,
+        900,
+        Math.cos(angle) * 850,
+      );
+      camera.position.lerp(destination, 1 - Math.exp(-dt * 1.8));
+      camera.lookAt(0, 25, 0);
+      camera.fov += (64 - camera.fov) * (1 - Math.exp(-dt * 2));
+      camera.updateProjectionMatrix();
+    } else if (!awardMode) {
+      let f = focusRacer ? carFrames.get(focusRacer.id) : frameAt(now / 160000);
+      const kind = shot.kind;
+      const behind =
+        kind === "overview"
+          ? 65
+          : kind === "front"
+            ? -23
+            : kind === "side"
+              ? 7
+              : 19;
+      const height = kind === "overview" ? 48 : kind === "side" ? 6 : 7.5;
+      const target = f.pos
         .clone()
-        .addScaledVector(f.tangent, kind === "front" ? 0 : 7)
-        .add(new THREE.Vector3(0, 1, 0)),
-    );
-    const desiredFov = focusRacer?.boosted && g.phase === "racing" ? 65 : 57;
-    camera.fov += (desiredFov - camera.fov) * (1 - Math.exp(-dt * 4));
-    camera.updateProjectionMatrix();
+        .addScaledVector(f.tangent, -behind)
+        .addScaledVector(
+          f.right,
+          kind === "side" ? 18 : kind === "overview" ? 14 : 3,
+        )
+        .add(new THREE.Vector3(0, height, 0));
+      if (!camera.userData.ready) {
+        camera.position.copy(target);
+        camera.userData.ready = true;
+      }
+      // Cut quickly between distant packs; smoothly follow within a shot.
+      if (camera.userData.shot !== shot.id + kind) {
+        camera.position.copy(target);
+        camera.userData.shot = shot.id + kind;
+      }
+      camera.position.lerp(target, 1 - Math.exp(-dt * 9));
+      camera.lookAt(
+        f.pos
+          .clone()
+          .addScaledVector(f.tangent, kind === "front" ? 0 : 7)
+          .add(new THREE.Vector3(0, 1, 0)),
+      );
+      const desiredFov = focusRacer?.boosted && g.phase === "racing" ? 65 : 57;
+      camera.fov += (desiredFov - camera.fov) * (1 - Math.exp(-dt * 4));
+      camera.updateProjectionMatrix();
+    }
+    if (awardMode) {
+      awardCamera.position.lerp(
+        new THREE.Vector3(9, 17, 49 + Math.min(ceremony.elapsed, 8)),
+        1 - Math.exp(-dt * 2),
+      );
+      awardCamera.lookAt(0, 4, 0);
+      if (celebration.parent !== destination) destination.add(celebration);
+      celebration.visible = true;
+      celebration.material.size = waitingPanorama ? 8 : 1.2;
+      const positions = celebration.geometry.attributes.position;
+      for (let i = 0; i < 192; i++) {
+        const burst = Math.floor(i / 64),
+          age = ((ceremony.elapsed + burst * 0.9) % 3.8) / 3.8;
+        const angle = i * 2.39996,
+          vertical = ((i % 64) / 63 - 0.5) * 2,
+          radius = Math.sqrt(Math.max(0, 1 - vertical * vertical));
+        const base = waitingPanorama
+          ? curve.getPointAt((burst + 0.2) / 3)
+          : new THREE.Vector3((burst - 1) * 11, 2, -6);
+        const size = waitingPanorama ? 90 : 6;
+        positions.setXYZ(
+          i,
+          base.x + Math.cos(angle) * radius * age * size,
+          base.y +
+            (waitingPanorama ? 120 : 8) +
+            vertical * age * size -
+            age * age * size * 0.5,
+          base.z + Math.sin(angle) * radius * age * size,
+        );
+      }
+      positions.needsUpdate = true;
+    } else if (celebration) celebration.visible = false;
     if (awardMode) confetti.rotation.y = effectiveNow / 15000;
     for (let i = projectiles.length - 1; i >= 0; i--) {
       const e = projectiles[i],
@@ -1403,7 +1506,10 @@ function animate() {
         target.clone().sub(e.mesh.position).normalize(),
       );
     }
-    renderer.render(awardMode ? awardScene : scene, viewCamera);
+    renderer.render(
+      awardMode && !waitingPanorama ? awardScene : scene,
+      viewCamera,
+    );
     if (frame % 2 === 0) {
       const alive = new Set(active.map((p) => p.id));
       for (const [id, el] of labels)
@@ -1666,5 +1772,8 @@ window.raceDebug = () => ({
     {},
   ),
   awardScene: !!awardScene && carGroup?.parent === awardScene,
+  cameraHeight: camera?.position.y,
+  panorama: stage.classList.contains("panorama-wait"),
+  celebration: !!celebration?.visible,
 });
 animate();

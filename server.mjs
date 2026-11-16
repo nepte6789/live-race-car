@@ -6,6 +6,7 @@ import { createInterface } from "node:readline";
 import { WebSocketServer } from "ws";
 import { Race, QUESTIONS } from "./src/game.mjs";
 import { Bots } from "./src/bots.mjs";
+import { LiveWelcomes } from "./src/live-welcomes.mjs";
 import { resolveLiveUser } from "./src/live-user.mjs";
 import {
   buildTikTokConnectionOptions,
@@ -18,6 +19,7 @@ if (fs.existsSync(path.join(ROOT, ".env")) && process.loadEnvFile)
 const PORT = Number(process.env.PORT) || 3000,
   HOST = "127.0.0.1",
   PUBLIC = path.join(ROOT, "public");
+const welcomes = new LiveWelcomes();
 const game = new Race(),
   bots = new Bots(game);
 let connection = null,
@@ -54,6 +56,8 @@ function envelope() {
     bots: {
       enabled: bots.enabled,
       count: bots.target,
+      effectiveTarget: bots.effectiveTarget,
+      retired: bots.retired,
       active: [...game.users.values()].filter(
         (p) => p.demo && p.id.startsWith("bot-"),
       ).length,
@@ -158,6 +162,7 @@ const wss = new WebSocketServer({
   verifyClient: ({ req }) => valid(req),
 });
 async function disconnect() {
+  welcomes.reset();
   generation++;
   const old = connection;
   connection = null;
@@ -202,7 +207,7 @@ async function connect(value) {
   on(WebcastEvent.MEMBER, (d) => {
     live.joins++;
     const p = user(d);
-    if (p) game.member(p, id(d, "member"));
+    if (p && live.status === "connected") welcomes.offer(p, d, id(d, "member"));
   });
   on(WebcastEvent.CHAT, (d) => {
     live.comments++;
@@ -246,6 +251,7 @@ async function connect(value) {
   });
   on(ControlEvent.DISCONNECTED, () => {
     live.status = "disconnected";
+    welcomes.reset();
     auto.disconnected();
   });
   on(ControlEvent.ERROR, (e) => {
@@ -264,6 +270,7 @@ async function connect(value) {
       return;
     }
     live.status = "connected";
+    welcomes.connected();
     live.roomId = String(result.roomId || "");
     log("Đã kết nối @" + channel);
   } catch (error) {
@@ -379,6 +386,8 @@ wss.on("connection", (c, req) => {
   });
 });
 const tick = setInterval(() => {
+    for (const arrival of welcomes.take())
+      game.member(arrival.user, arrival.eventId, arrival.at);
     game.tick();
     bots.tick();
     changed();

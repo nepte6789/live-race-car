@@ -21,6 +21,8 @@ export class Bots {
     this.serial = 0;
     this.plans = new Map();
     this.next = 0;
+    this.retired = 0;
+    this.lastRetireAt = -Infinity;
   }
   configure(on, count = 12) {
     count = Number(count);
@@ -28,16 +30,54 @@ export class Bots {
       throw Error("Số người thử từ 1–60");
     this.enabled = !!on;
     this.target = count;
-    if (on) this.fill();
+    if (on) {
+      this.retired = 0;
+      this.lastRetireAt = -Infinity;
+      this.race.realComments = [];
+      this.fill();
+    }
+  }
+  get effectiveTarget() {
+    return Math.max(0, this.target - this.retired);
+  }
+  retireForActivity() {
+    const r = this.race,
+      now = this.now();
+    r.realComments = r.realComments.filter(
+      (x) =>
+        now - x.at <= 30000 && r.users.has(x.id) && !r.users.get(x.id).demo,
+    );
+    if (
+      r.phase !== "racing" ||
+      r.firstFinisherAt !== null ||
+      now - this.lastRetireAt < 10000 ||
+      r.realComments.length < 6 ||
+      new Set(r.realComments.map((x) => x.id)).size < 2
+    )
+      return;
+    const bot = r
+      .ranking()
+      .reverse()
+      .find((p) => p.demo && p.id.startsWith("bot-") && !p.finishedAt);
+    if (!bot) return;
+    r.users.delete(bot.id);
+    r.submissions.delete(bot.id);
+    this.plans.delete(bot.id);
+    const remaining = [...r.users.values()].filter(
+      (p) => p.demo && p.id.startsWith("bot-"),
+    ).length;
+    this.retired = Math.max(this.retired + 1, this.target - remaining);
+    this.lastRetireAt = now;
+    r.realComments.splice(0, 6);
   }
   fill() {
     const r = this.race,
       list = [...r.users.values()].filter(
         (p) => p.demo && p.id.startsWith("bot-"),
       );
-    for (const p of list.slice(this.target)) r.users.delete(p.id);
-    let active = Math.min(list.length, this.target);
-    while (active < this.target && r.users.size < r.config.capacity) {
+    for (const p of list.slice(this.effectiveTarget)) r.users.delete(p.id);
+    let active = Math.min(list.length, this.effectiveTarget);
+    while (active < this.effectiveTarget && r.users.size < r.config.capacity) {
       const n = ++this.serial;
       r.join({
         id: "bot-" + n,
@@ -51,6 +91,7 @@ export class Bots {
   }
   tick() {
     if (!this.enabled || this.race.phase === "paused") return;
+    this.retireForActivity();
     this.fill();
     const r = this.race;
     if (r.phase !== "racing") return;

@@ -41,7 +41,9 @@ function render(m) {
   $("start").disabled = !["lobby", "finished"].includes(g.phase);
   $("pause").disabled = g.phase === "lobby";
   $("pause").textContent = g.phase === "paused" ? "▶ Tiếp tục" : "Ⅱ Tạm dừng";
-  $("bots").textContent = m.bots.enabled ? "Tắt người thử" : "Bật người thử";
+  $("bots").textContent = m.bots.enabled
+    ? `Tắt người thử (${m.bots.active}/${m.bots.effectiveTarget ?? m.bots.count})`
+    : "Bật người thử";
   $("leader").textContent = g.racers[0]?.name || "Chưa có";
   const configKeys = [
     "laps",

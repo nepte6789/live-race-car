@@ -22,10 +22,10 @@ function setup() {
     },
   };
 }
-test("24 unique questions have four options and valid answer keys", () => {
-  assert.equal(QUESTIONS.length, 24);
-  assert.equal(new Set(QUESTIONS.map((q) => q.id)).size, 24);
-  assert.equal(new Set(QUESTIONS.map((q) => q.prompt)).size, 24);
+test("144 unique questions have four options and valid answer keys", () => {
+  assert.equal(QUESTIONS.length, 144);
+  assert.equal(new Set(QUESTIONS.map((q) => q.id)).size, 144);
+  assert.equal(new Set(QUESTIONS.map((q) => q.prompt)).size, 144);
   assert.ok(
     QUESTIONS.every(
       (q) =>
