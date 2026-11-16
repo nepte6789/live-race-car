@@ -1,0 +1,19 @@
+{
+  "name": "tiktok-live-race",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Đường Đua LIVE — đua xe 3D tương tác TikTok",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "three": "0.160.1",
+    "ws": "8.18.0",
+    "tiktok-live-connector": "2.5.0"
+  }
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Đường Đua LIVE · Neon Rush</title>
+    <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="/assets/race.css" />
+  </head>
+  <body>
+    <main id="stage">
+      <div id="scene"></div>
+      <div id="labels"></div>
+      <div class="vignette"></div>
+      <header>
+        <div class="brand">
+          <span class="brand-symbol">≋</span>
+          <div>
+            <small>NEON RUSH / INTERACTIVE GRAND PRIX</small>
+            <h1>ĐƯỜNG ĐUA <em>LIVE</em></h1>
+          </div>
+          <span id="connection">● SERVER</span>
+        </div>
+        <div class="follow">
+          <span>MỤC TIÊU FOLLOW PHIÊN LIVE</span><b id="followCount">0 / 50</b
+          ><i><s id="followBar"></s></i>
+        </div>
+        <div class="race-stats">
+          <b id="lap">VÒNG 1 / 5</b><span id="raceTime">00:00</span
+          ><span id="population">0 TAY ĐUA</span>
+        </div>
+      </header>
+      <div class="ticker">
+        <b>ĐƯỜNG ĐUA</b
+        ><span id="ticker"
+          >Bình luận bất kỳ để lên xe · Trả lời A, B, C hoặc D để tăng tốc</span
+        >
+      </div>
+      <section class="quiz" id="quiz">
+        <div class="quiz-head">
+          <strong>✦ CÂU HỎI TĂNG TỐC</strong><span id="quizClock">20 GIÂY</span>
+        </div>
+        <h2 id="prompt">Bình luận để lên xe. Sẵn sàng bứt tốc?</h2>
+        <div id="answers"></div>
+        <div class="quiz-foot">
+          <span id="quizRule"
+            >Đúng → NITRO 5 giây · Chỉ tính đáp án đầu tiên</span
+          ><span id="answered">0 ĐÃ CHỐT</span>
+        </div>
+        <p id="explanation" hidden></p>
+      </section>
+      <aside class="ranking">
+        <div class="panel-title">🏁 TOP TAY ĐUA</div>
+        <ol id="ranking"></ol>
+      </aside>
+      <div id="centerState">
+        <span id="stateEyebrow">THÀNH PHỐ ĐÃ LÊN ĐÈN</span
+        ><strong id="countdown">CHỜ XUẤT PHÁT</strong>
+        <p id="stateHint">Bình luận bất kỳ để tham gia đường đua</p>
+      </div>
+      <div id="giftToast" hidden></div>
+      <div id="effectLabel" hidden></div>
+      <canvas id="minimap" width="420" height="310"></canvas>
+      <section class="telemetry">
+        <div>
+          <small id="focusName">ĐANG THEO XE DẪN ĐẦU</small
+          ><strong id="speed">000<span>KM/H</span></strong>
+        </div>
+        <div class="nitro">
+          <small>NITRO <b id="charge">0%</b></small
+          ><i><s id="chargeBar"></s></i><span>Bình luận NITRO khi đủ 30%</span>
+        </div>
+      </section>
+      <div class="chat" id="chat"></div>
+      <div class="join-rule">
+        💬 Bình luận để lên xe <span>·</span> A / B / C / D để tăng tốc
+        <span>·</span> Trái / phải để đổi làn
+      </div>
+      <footer>
+        <span id="modeStatus">ĐANG CHỜ KẾT NỐI LIVE</span
+        ><button id="sound">🔊 Bật âm thanh</button>
+      </footer>
+      <div id="renderWarning" hidden></div>
+    </main>
+    <script src="/assets/live-socket.js"></script>
+    <script src="/assets/home-music.js"></script>
+    <script src="/assets/reward-voice.js"></script>
+    <script type="module" src="/assets/race.js"></script>
+  </body>
+</html>

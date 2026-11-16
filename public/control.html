@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Điều khiển · Đường Đua LIVE</title>
+    <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="/assets/control.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <p>NEON RUSH / PHÒNG ĐIỀU HÀNH</p>
+        <h1>Đường Đua LIVE <span>🏁</span></h1>
+        <p>Thành phố neon. Năm vòng đua. Khán giả làm chủ cuộc chơi.</p>
+      </div>
+      <a class="primary button" href="/overlay.html" target="race-overlay"
+        >Mở đường đua 3D ↗</a
+      >
+    </header>
+    <div class="statuses">
+      <span id="serverStatus">Server: đang kết nối</span
+      ><span id="liveStatus">TikTok: chưa kết nối</span
+      ><span id="phaseStatus">Sảnh chờ</span
+      ><span id="population">0 tay đua</span>
+    </div>
+    <div id="notice" role="status"></div>
+    <main>
+      <section class="card">
+        <small>01 / KẾT NỐI TIKTOK LIVE</small>
+        <h2>Đưa khán giả lên xe</h2>
+        <label>Link kênh hoặc @username</label>
+        <div class="row">
+          <input
+            id="channel"
+            placeholder="https://www.tiktok.com/@tenkenh/live"
+          /><button id="connect" class="primary">Kết nối</button
+          ><button id="disconnect">Ngắt</button>
+        </div>
+        <p id="autoStatus" class="hint">
+          Tự thử lại sau 2 phút khi mất kết nối.
+        </p>
+        <p id="keyStatus" class="hint"></p>
+        <details>
+          <summary>EulerStream API key</summary>
+          <p>
+            Tạo file <code>.env</code> bên cạnh <code>package.json</code>, thêm
+            <code>EULERSTREAM_API_KEY=key_cua_ban</code> rồi chạy lại. Key chỉ
+            nằm trên server.
+          </p>
+        </details>
+        <div class="instruction">
+          Bình luận bất kỳ để lên xe, hoặc trả lời <b>A / B / C / D</b> để vừa
+          tham gia vừa chốt đáp án. Đúng nhận <b>nitro 5 giây</b>. Bình luận
+          <b>trái / phải</b> đổi làn; <b>NITRO</b> để dùng 30% năng lượng.
+        </div>
+      </section>
+      <section class="card">
+        <small>02 / ĐIỀU KHIỂN VÁN</small>
+        <h2 id="roundTitle">Ván 1 · 5 vòng</h2>
+        <div class="row">
+          <button id="start" class="primary">▶ Xuất phát</button
+          ><button id="pause">Ⅱ Tạm dừng</button
+          ><button id="reset">Về sảnh / giữ người</button
+          ><button id="clearAll" class="danger">Xóa ván & người</button>
+        </div>
+        <div class="four">
+          <div class="stat">
+            <small>Thời gian đua</small><strong id="elapsed">00:00</strong>
+          </div>
+          <div class="stat">
+            <small>Xe dẫn đầu</small><strong id="leader">Chưa có</strong>
+          </div>
+        </div>
+        <label
+          >Góc máy<select id="camera">
+            <option value="chase">Bám đuôi xe dẫn đầu / xe nhận quà</option>
+            <option value="overview">Toàn cảnh từ trên cao</option>
+          </select></label
+        >
+        <p class="hint">
+          Bắt đầu đếm 5 giây, đua đủ số vòng rồi chốt thứ hạng. Khi người đầu
+          tiên cán đích, những người khác có thêm tối đa 15 giây. Mặc định tự mở
+          ván tiếp sau 12 giây.
+        </p>
+      </section>
+      <section class="card">
+        <small>03 / THỬ TƯƠNG TÁC</small>
+        <h2>Test trước khi lên LIVE</h2>
+        <div class="two">
+          <label>Tên người thử<input id="simName" value="Minh Anh" /></label
+          ><label
+            >Bình luận / đáp án<input id="simText" value="Lên xe"
+          /></label>
+        </div>
+        <div class="row">
+          <button id="comment" class="primary">Gửi bình luận</button
+          ><button id="correct">Thử đáp án đúng</button
+          ><button id="like">100 tim</button
+          ><button id="follow">Theo dõi</button>
+        </div>
+        <div class="row">
+          <button data-gift="1">⚡ Nitro</button
+          ><button data-gift="10">🛡 Khiên</button
+          ><button data-gift="50">🚀 Tên lửa</button
+          ><button data-gift="100">🌀 Vòng xoáy</button>
+        </div>
+        <div class="row">
+          <label class="inline"
+            >Xe tự động<input
+              id="botCount"
+              value="12"
+              type="number"
+              min="1"
+              max="60" /></label
+          ><button id="bots">Bật người thử</button
+          ><button id="clearDemo" class="danger">Xóa người thử</button>
+        </div>
+        <p class="hint">
+          Người thử tự trả lời, thả tim, nhận quà trong game; không gửi tương
+          tác lên TikTok. Tên lửa/vòng xoáy chỉ tác động trong ván đang đua.
+        </p>
+      </section>
+      <section class="card">
+        <small>04 / LUẬT & HIỆU ỨNG QUÀ</small>
+        <h2>Chỉnh trước khi xuất phát</h2>
+        <form id="settings">
+          <div class="four">
+            <label
+              >Số vòng<input
+                id="laps"
+                type="number"
+                min="1"
+                max="10"
+                value="5" /></label
+            ><label
+              >Giây trả lời mỗi câu<input
+                id="quizSeconds"
+                type="number"
+                min="10"
+                max="60"
+                value="20" /></label
+            ><label
+              >Ngưỡng quà khiên (xu/quà)<input
+                id="shieldCoins"
+                type="number"
+                min="2"
+                max="10000"
+                value="10" /></label
+            ><label
+              >Ngưỡng tên lửa<input
+                id="attackCoins"
+                type="number"
+                min="3"
+                max="100000"
+                value="50" /></label
+            ><label
+              >Ngưỡng vòng xoáy<input
+                id="spinCoins"
+                type="number"
+                min="4"
+                max="1000000"
+                value="100" /></label
+            ><label
+              >Follow ban đầu<input
+                id="followBase"
+                type="number"
+                min="0"
+                value="0" /></label
+            ><label
+              >Mục tiêu follow<input
+                id="followGoal"
+                type="number"
+                min="1"
+                value="50" /></label
+            ><label class="inline"
+              ><input type="checkbox" id="autoNext" checked /> Tự mở ván
+              mới</label
+            >
+          </div>
+          <button class="primary">Lưu luật</button>
+        </form>
+        <p class="hint">
+          Dưới ngưỡng khiên → tăng tốc. Khiên chặn tên lửa/vòng xoáy. Quà theo
+          xu của từng món, không theo tổng combo. Cài đặt mặc định là luật của
+          bản dựng, có thể khác quy đổi trong video mẫu.
+        </p>
+      </section>
+      <section class="card full">
+        <small>05 / CÂU HỎI TĂNG TỐC</small>
+        <h2 id="currentQuestion">Đang chờ ván</h2>
+        <p id="currentAnswer" class="hint"></p>
+        <div class="row">
+          <button id="nextQuiz">Câu tiếp theo</button
+          ><span id="quizStatus" class="hint"></span>
+        </div>
+        <details>
+          <summary>Bộ 24 câu khởi đầu</summary>
+          <div id="bank" class="question-bank"></div>
+        </details>
+      </section>
+      <section class="card full">
+        <small>06 / TAY ĐUA & TÍN HIỆU</small>
+        <h2>Bảng xếp hạng trực tiếp</h2>
+        <div id="rankings" class="race-table"></div>
+        <div class="two">
+          <div id="feed" class="feed"></div>
+          <pre id="logs"></pre>
+        </div>
+      </section>
+    </main>
+    <footer>
+      ĐƯỜNG ĐUA LIVE · Hình học xe, đường và thành phố được tạo riêng · Không sử
+      dụng video, logo hoặc tài sản từ mẫu
+    </footer>
+    <script src="/assets/live-socket.js"></script>
+    <script src="/assets/control.js"></script>
+  </body>
+</html>
