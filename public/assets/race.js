@@ -1,5 +1,6 @@
 import * as THREE from "/vendor/three.module.js";
 import { TRACK_POINTS } from "./track.js";
+import { quietForResults } from "./speech-policy.js";
 import { interactionSpeech } from "./reward-text.js";
 import { buildCarGeometry } from "./car-model.js";
 import { selectShot } from "./camera-director.js";
@@ -577,6 +578,7 @@ let state = null,
   lastStateAt = 0,
   round = 0,
   lastEvent = 0,
+  lastViewerNews = -Infinity,
   focusId = null,
   focusUntil = 0,
   effectUntil = 0,
@@ -730,19 +732,63 @@ function showEvent(e) {
     });
   }
 
-  $("ticker").textContent = e.text;
+  const viewerNews =
+    !e.demo &&
+    ["comment", "like", "gift", "correct", "boost", "welcome"].includes(e.type);
+  if (viewerNews || e.type === "winner" || Date.now() - lastViewerNews > 5000)
+    $("ticker").textContent = e.text;
+  if (viewerNews) lastViewerNews = Date.now();
   if (
-    ["like", "gift", "correct", "boost", "winner", "welcome"].includes(e.type)
+    [
+      "comment",
+      "like",
+      "gift",
+      "correct",
+      "boost",
+      "winner",
+      "welcome",
+    ].includes(e.type)
   ) {
     if (e.type === "gift") {
       focusId = e.userId;
       focusUntil = Date.now() + 5000;
     }
-    if (soundOn && ["like", "gift", "winner", "welcome"].includes(e.type))
-      voice.enqueue(interactionSpeech(e), e.type === "like" ? 0 : 1, {
-        key: e.type === "like" ? `thanks:like:${e.userId}` : "",
-        interrupt: e.type === "winner",
-      });
+    if (
+      soundOn &&
+      ["comment", "like", "gift", "winner", "welcome"].includes(e.type)
+    ) {
+      const question = state.game.quiz;
+      if (
+        e.type === "comment" &&
+        e.answer &&
+        (!question || question.phase !== "question")
+      )
+        return;
+      voice.enqueue(
+        interactionSpeech(e),
+        e.type === "winner"
+          ? 3
+          : e.type === "comment"
+            ? 1.5
+            : e.type === "like"
+              ? 0
+              : 1,
+        {
+          key: ["like", "comment"].includes(e.type)
+            ? `thanks:${e.type}:${e.userId}`
+            : "",
+          interrupt: e.type === "winner",
+          demo: !!e.demo,
+          kind: e.type,
+          expiresAt:
+            e.type === "comment"
+              ? e.answer
+                ? question.deadline - offset
+                : Date.now() + 30000
+              : null,
+        },
+      );
+    }
   }
 }
 function render(m) {
@@ -750,6 +796,9 @@ function render(m) {
   offset = m.game.serverTime - Date.now();
   lastStateAt = performance.now();
   const g = m.game;
+  voice.setQuiet(
+    quietForResults(g, g.phase === "paused" ? g.effectiveTime : g.serverTime),
+  );
   if (!g.quiz) voice.dropQuestions();
   stage.classList.toggle("awaiting-awards", !!g.awaitingAwards);
   $("quizHeading").textContent = g.awaitingAwards
@@ -768,6 +817,7 @@ function render(m) {
     else voice.clear();
     spokenQuiz = "";
     lastEvent = 0;
+    lastViewerNews = -Infinity;
     for (const el of labels.values()) el.remove();
     labels.clear();
   }
@@ -1446,6 +1496,7 @@ function uiTimer() {
       (g.phase === "racing"
         ? Math.max(0, (Date.now() + offset - g.serverTime) / 1000)
         : 0);
+  voice.setQuiet(quietForResults(g, now));
   $("raceTime").textContent =
     String(Math.floor(elapsed / 60)).padStart(2, "0") +
     ":" +

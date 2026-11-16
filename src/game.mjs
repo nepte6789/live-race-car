@@ -89,7 +89,21 @@ export class Race {
       if (data.avatar) p.avatar = avatar(data.avatar);
       return p;
     }
-    if (this.users.size >= this.config.capacity) return null;
+    if (this.users.size >= this.config.capacity) {
+      if (data.demo) return null;
+      const ranked = this.ranking();
+      const bot = [...ranked]
+        .reverse()
+        .find(
+          (p) =>
+            p.demo &&
+            p.id !== this.winner &&
+            (!p.finishedAt || ranked.indexOf(p) >= 3),
+        );
+      if (!bot) return null;
+      this.users.delete(bot.id);
+      this.submissions.delete(bot.id);
+    }
     const pack = [...this.users.values()].filter((p) => !p.finishedAt);
     let progress =
       this.phase === "racing" && pack.length
@@ -152,6 +166,7 @@ export class Race {
       likes: 0,
       likeRemainder: 0,
       likeThanksAt: null,
+      commentThanksAt: null,
       followed: false,
     };
     this.users.set(id, p);
@@ -182,6 +197,16 @@ export class Race {
     });
     if (this.chat.length > 30) this.chat.shift();
     const input = normalize(text);
+    if (
+      !p.demo &&
+      (p.commentThanksAt === null || this.now() - p.commentThanksAt >= 10000)
+    ) {
+      p.commentThanksAt = this.now();
+      this.emit("comment", p, `${p.name}: ${String(text).slice(0, 120)}`, {
+        comment: String(text).slice(0, 120),
+        answer: /^[abcd]$/.test(input),
+      });
+    }
     if (["trai", "left"].includes(input)) {
       const lane = LANES.reduce(
         (a, b) =>

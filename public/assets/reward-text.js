@@ -11,6 +11,12 @@ const plain = (text) =>
     .toLowerCase();
 export function interactionSpeech(event) {
   const name = clean(event.name) || "bạn";
+  if (event.type === "comment") {
+    const comment = clean(event.comment).slice(0, 120);
+    return event.answer
+      ? `${name} chọn đáp án ${comment.toUpperCase()}.`
+      : `${name} bình luận: ${comment}.`;
+  }
   if (event.type === "like") return `Cảm ơn ${name} đã thả tim cho đường đua.`;
   if (event.type !== "gift") return clean(event.text);
   const quantity = Math.max(
