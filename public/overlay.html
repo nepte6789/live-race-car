@@ -43,7 +43,8 @@
       </section>
       <section class="quiz" id="quiz">
         <div class="quiz-head">
-          <strong>✦ CÂU HỎI TĂNG TỐC</strong><span id="quizClock">20 GIÂY</span>
+          <strong id="quizHeading">✦ CÂU HỎI TĂNG TỐC</strong
+          ><span id="quizClock">20 GIÂY</span>
         </div>
         <h2 id="prompt">Thả tim hoặc bình luận để lên xe. Sẵn sàng bứt tốc?</h2>
         <div id="answers"></div>
@@ -77,6 +78,10 @@
       <canvas id="minimap" width="420" height="310"></canvas>
       <div id="cameraCaption">GÓC MÁY TỰ ĐỘNG</div>
       <div id="speedStreaks" aria-hidden="true"></div>
+      <div id="nextRoundClock" hidden>
+        <span>MÀN MỚI BẮT ĐẦU SAU</span><strong id="nextRoundSeconds">30</strong
+        ><span>GIÂY</span>
+      </div>
       <section id="podium" hidden aria-label="Bục trao giải"></section>
       <footer>
         <span id="modeStatus">ĐANG CHỜ KẾT NỐI LIVE</span

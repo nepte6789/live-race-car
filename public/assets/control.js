@@ -71,7 +71,7 @@ function render(m) {
   $("currentAnswer").textContent = q
     ? `Đáp án: ${"ABCD"[q.answer]}. ${q.options[q.answer]}`
     : "";
-  $("nextQuiz").disabled = g.phase !== "racing";
+  $("nextQuiz").disabled = g.phase !== "racing" || !g.quiz;
   $("rankings").replaceChildren();
   for (const p of g.racers) {
     const row = document.createElement("div");

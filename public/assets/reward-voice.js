@@ -32,6 +32,13 @@ window.RewardVoice = class {
     this.items = [];
     this.cancelCurrent();
   }
+  dropQuestions() {
+    this.items = this.items.filter((item) => item.priority !== 2);
+    if (this.current?.priority === 2) {
+      this.cancelCurrent();
+      this.drain();
+    }
+  }
   drop(key) {
     this.items = this.items.filter((x) => x.key !== key);
     if (this.current?.key === key) {
@@ -58,7 +65,7 @@ window.RewardVoice = class {
     const message = { text, priority, at: Date.now(), key, expiresAt };
     if (interrupt) {
       const resume = this.current;
-      if (resume?.priority === 1) this.items.unshift(resume);
+      if (resume && resume.priority < 2) this.items.unshift(resume);
       this.cancelCurrent();
       this.items.unshift(message);
     } else this.items.push(message);

@@ -84,3 +84,43 @@ test("timed questions interrupt rewards, rewards resume, and speech ducking is r
   assert.equal(f.speaking.at(-1), false);
   assert.equal(f.voice.busy, false);
 });
+
+test("closing the quiz cancels active and queued questions while preserving reward speech", () => {
+  const f = setup([v("Microsoft An")]);
+  f.voice.enqueue("Câu đang đọc", 2, { key: "q1" });
+  f.voice.enqueue("Đáp án đang chờ", 2, { key: "q2" });
+  f.voice.enqueue("Cảm ơn quà");
+  const old = f.said[0];
+  f.voice.dropQuestions();
+  assert.equal(f.voice.current.text, "Cảm ơn quà");
+  assert.equal(
+    f.voice.items.some((x) => x.priority === 2),
+    false,
+  );
+  old.onend();
+  assert.equal(f.voice.current.text, "Cảm ơn quà");
+  f.said[1].onend();
+  assert.equal(f.voice.busy, false);
+});
+
+test("heart thanks resume after a question and duplicate queued thanks are suppressed", () => {
+  const f = setup([v("Microsoft An")]);
+  f.voice.enqueue("Cảm ơn tim", 0, { key: "thanks:like:a" });
+  f.voice.enqueue("Câu hỏi", 2, { key: "q", interrupt: true });
+  f.voice.enqueue("Cảm ơn tim", 0, { key: "thanks:like:a" });
+  assert.equal(
+    f.voice.items.filter((x) => x.key === "thanks:like:a").length,
+    1,
+  );
+  f.said[1].onend();
+  assert.equal(f.said[2].text, "Cảm ơn tim");
+});
+test("a crowded queue drops heart thanks before dropping a gift thank-you", () => {
+  const f = setup([v("Microsoft An")]);
+  f.voice.enqueue("Câu hỏi", 2);
+  for (let i = 0; i < 30; i++)
+    f.voice.enqueue("Tim " + i, 0, { key: "heart" + i });
+  f.voice.enqueue("Cảm ơn hoa", 1);
+  assert.equal(f.voice.items.length, 30);
+  assert.ok(f.voice.items.some((x) => x.text === "Cảm ơn hoa"));
+});

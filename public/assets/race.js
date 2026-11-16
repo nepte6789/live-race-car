@@ -1,5 +1,6 @@
 import * as THREE from "/vendor/three.module.js";
 import { TRACK_POINTS } from "./track.js";
+import { interactionSpeech } from "./reward-text.js";
 import { buildCarGeometry } from "./car-model.js";
 import { selectShot } from "./camera-director.js";
 const $ = (id) => document.getElementById(id),
@@ -730,18 +731,18 @@ function showEvent(e) {
   }
 
   $("ticker").textContent = e.text;
-  if (["gift", "correct", "boost", "winner", "welcome"].includes(e.type)) {
+  if (
+    ["like", "gift", "correct", "boost", "winner", "welcome"].includes(e.type)
+  ) {
     if (e.type === "gift") {
       focusId = e.userId;
       focusUntil = Date.now() + 5000;
     }
-    if (soundOn && ["gift", "winner", "welcome"].includes(e.type))
-      voice.enqueue(
-        e.type === "gift"
-          ? `Cảm ơn ${e.name} đã tiếp sức cho đường đua.`
-          : e.text,
-        1,
-      );
+    if (soundOn && ["like", "gift", "winner", "welcome"].includes(e.type))
+      voice.enqueue(interactionSpeech(e), e.type === "like" ? 0 : 1, {
+        key: e.type === "like" ? `thanks:like:${e.userId}` : "",
+        interrupt: e.type === "winner",
+      });
   }
 }
 function render(m) {
@@ -749,6 +750,11 @@ function render(m) {
   offset = m.game.serverTime - Date.now();
   lastStateAt = performance.now();
   const g = m.game;
+  if (!g.quiz) voice.dropQuestions();
+  stage.classList.toggle("awaiting-awards", !!g.awaitingAwards);
+  $("quizHeading").textContent = g.awaitingAwards
+    ? "🏁 CHỜ TRAO GIẢI"
+    : "✦ CÂU HỎI TĂNG TỐC";
   if (g.round !== round) {
     round = g.round;
     positions.clear();
@@ -859,10 +865,14 @@ function render(m) {
       }
     }
   } else {
-    $("prompt").textContent =
-      "Thả tim hoặc bình luận để lên xe. Sẵn sàng bứt tốc?";
+    $("prompt").textContent = g.awaitingAwards
+      ? "CHUẨN BỊ TRAO GIẢI"
+      : "Thả tim hoặc bình luận để lên xe. Sẵn sàng bứt tốc?";
     $("answered").textContent = "";
-    $("explanation").hidden = true;
+    $("explanation").hidden = !g.awaitingAwards;
+    $("explanation").textContent = g.awaitingAwards
+      ? "Các tay đua còn lại đang về đích. Chờ chốt kết quả để trao giải top 3."
+      : "";
   }
   labelSafeTop = $("quiz").offsetTop + $("quiz").offsetHeight + 12;
   const sidebarTop = Math.max(690, labelSafeTop + 30);
@@ -1441,7 +1451,9 @@ function uiTimer() {
     String(Math.floor(elapsed) % 60).padStart(2, "0");
   $("quizClock").textContent = g.quiz
     ? `${Math.max(0, Math.ceil((g.quiz.deadline - now) / 1000))} ${g.quiz.phase === "reveal" ? "NGHỈ" : "GIÂY"}`
-    : "CHỜ XUẤT PHÁT";
+    : g.awaitingAwards
+      ? `${Math.max(0, Math.ceil((g.awardsDeadline - now) / 1000))} GIÂY VỀ ĐÍCH`
+      : "CHỜ XUẤT PHÁT";
   const remaining = g.quiz ? Math.max(0, (g.quiz.deadline - now) / 1000) : 0;
   const fraction = g.quiz
     ? Math.min(
@@ -1465,6 +1477,14 @@ function uiTimer() {
     "aria-valuenow",
     Math.round(fraction * 100),
   );
+  const ceremony =
+    g.phase === "finished" ||
+    (g.phase === "paused" && g.pausedPhase === "finished");
+  $("nextRoundClock").hidden = !ceremony || !g.config.autoNext;
+  $("nextRoundSeconds").textContent = Math.max(
+    0,
+    Math.ceil((g.phaseDeadline - now) / 1000),
+  );
   const phase = g.phase;
   $("centerState").hidden = phase === "racing";
   $("centerState").className =
@@ -1485,7 +1505,7 @@ function uiTimer() {
     $("stateEyebrow").textContent = "CỜ CA RÔ ĐÃ HẠ";
     $("countdown").textContent = winner ? "🏆 " + winner.name : "VỀ ĐÍCH";
     $("stateHint").textContent = g.config.autoNext
-      ? `Ván mới sau ${Math.max(0, Math.ceil((g.phaseDeadline - now) / 1000))} giây`
+      ? "Vinh danh top 3 · Màn mới bắt đầu khi đếm ngược kết thúc"
       : "Chờ người điều khiển mở ván mới";
   } else if (phase === "lobby") {
     $("stateEyebrow").textContent = "THÀNH PHỐ ĐÃ LÊN ĐÈN";
